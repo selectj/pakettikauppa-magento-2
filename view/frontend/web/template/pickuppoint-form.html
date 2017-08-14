@@ -1,0 +1,13 @@
+<div>
+    <form id="pickuppoint-form" class="form" data-bind="attr: {'data-hasrequired': $t('* Required Fields')}">
+        <fieldset class="fieldset">
+            <legend data-bind="i18n: 'Search pickuppoints'"></legend>
+            <!-- ko foreach: getRegion('pickuppoint-form-fields') -->
+            <!-- ko template: getTemplate() --><!-- /ko -->
+            <!--/ko-->
+        </fieldset>
+        <button type="button" data-bind="click: onSubmit()" class="action">
+            <span data-bind="i18n: 'Search'"></span>
+        </button>
+    </form>
+</div>
