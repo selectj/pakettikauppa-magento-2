@@ -126,6 +126,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     public function getTrackingUrl($order){
       $track_data = $order->getTracksCollection()->getData();
       $track_number = $track_data[0]['track_number'];
-      return 'http://local.pakettikauppa2/pub/labels/'.$track_number.'.pdf';
+      return '/pub/labels/'.$track_number.'.pdf';
     }
 }

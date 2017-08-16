@@ -25,7 +25,7 @@ define([
 
                   jQuery.ajax({
                       showLoader: true,
-                      url: 'http://local.pakettikauppa2/logistics/index/index',
+                      url: '/logistics/index/index',
                       data: {zip_code:formData['pickuppoint-zip']},
                       type: "POST",
                       dataType: 'text',
