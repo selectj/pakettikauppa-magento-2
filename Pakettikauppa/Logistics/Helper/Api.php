@@ -19,6 +19,7 @@ use Pakettikauppa\Shipment\Parcel;
 use Pakettikauppa\Client;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Psr\Log\LoggerInterface;
 
 
 
@@ -29,11 +30,14 @@ class Api extends \Magento\Framework\App\Helper\AbstractHelper
     protected $secret;
     protected $development;
     protected $active;
+    private   $logger;
 
     function __construct(
+      LoggerInterface $logger,
       DirectoryList $directory_list,
       ScopeConfigInterface $scopeConfig
     ){
+        $this->logger = $logger;
         $this->directory_list = $directory_list;
         $this->scopeConfig = $scopeConfig;
         $this->active = $this->scopeConfig->getValue('pakettikauppa_config/store/active');
