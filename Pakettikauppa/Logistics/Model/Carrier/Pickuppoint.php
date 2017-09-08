@@ -6,6 +6,7 @@ use Magento\Shipping\Model\Rate\Result;
 use Pakettikauppa\Logistics\Helper\Data;
 use Pakettikauppa\Logistics\Helper\Api;
 use Magento\Sales\Model\Order\Shipment\Track;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 
 class Pickuppoint extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
     \Magento\Shipping\Model\Carrier\CarrierInterface
@@ -24,7 +25,6 @@ class Pickuppoint extends \Magento\Shipping\Model\Carrier\AbstractCarrier implem
      * @param array $data
      */
     public function __construct(
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Quote\Model\Quote\Address\RateResult\ErrorFactory $rateErrorFactory,
         \Psr\Log\LoggerInterface $logger,
         \Magento\Shipping\Model\Rate\ResultFactory $rateResultFactory,
@@ -33,6 +33,7 @@ class Pickuppoint extends \Magento\Shipping\Model\Carrier\AbstractCarrier implem
         Track $trackFactory,
         Api $apiHelper,
         Data $dataHelper,
+        ScopeConfigInterface $scopeConfig,
         array $data = []
     ) {
         $this->dataHelper = $dataHelper;
@@ -41,6 +42,7 @@ class Pickuppoint extends \Magento\Shipping\Model\Carrier\AbstractCarrier implem
         $this->_rateMethodFactory = $rateMethodFactory;
         $this->_storeManager=$storeManager;
         $this->trackFactory = $trackFactory;
+        $this->scopeConfig = $scopeConfig;
         parent::__construct($scopeConfig, $rateErrorFactory, $logger, $data);
     }
 
@@ -76,13 +78,26 @@ class Pickuppoint extends \Magento\Shipping\Model\Carrier\AbstractCarrier implem
               $method->setCarrier('pktkp_pickuppoint');
               $method->setCarrierTitle($pp->provider." - ".$pp->name.": ".$pp->street_address.", ".$pp->postcode.", ".$pp->city);
 
+              $db_price =  $this->scopeConfig->getValue('carriers/pickuppoint/price');
+              $db_title =  $this->scopeConfig->getValue('carriers/pickuppoint/title');
+
+              $conf_price = $this->getConfigData('price');
+              $conf_title = $this->getConfigData('title');
+
+              if($db_price == ''){
+                $price = $conf_price;
+              }else{
+                $price = $db_price;
+              }
+              if($db_title == ''){
+                $title = $conf_title;
+              }else{
+                $tile = $db_title;
+              }
               $method->setMethod($pp->pickup_point_id);
-              $method->setMethodTitle('Pickuppoint');
-
-              $amount = $this->getConfigData('price');
-
-              $method->setPrice($amount);
-              $method->setCost($amount);
+              $method->setMethodTitle($tile);
+              $method->setPrice($price);
+              $method->setCost($price);
 
               $result->append($method);
             }
