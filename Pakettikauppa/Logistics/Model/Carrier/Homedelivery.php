@@ -60,23 +60,24 @@ class Homedelivery extends \Magento\Shipping\Model\Carrier\AbstractCarrier imple
         $result = $this->_rateResultFactory->create();
 
         $homedelivery = $this->apiHelper->getHomeDelivery();
+        if(count($homedelivery)>0){
+          foreach ($homedelivery as $hd) {
+            /** @var \Magento\Quote\Model\Quote\Address\RateResult\Method $method */
+            $method = $this->_rateMethodFactory->create();
 
-        foreach ($homedelivery as $hd) {
-          /** @var \Magento\Quote\Model\Quote\Address\RateResult\Method $method */
-          $method = $this->_rateMethodFactory->create();
+            $method->setCarrier('pktkp_homedelivery');
+            $method->setCarrierTitle($hd->service_provider);
 
-          $method->setCarrier('pktkp_homedelivery');
-          $method->setCarrierTitle($hd->service_provider);
+            $method->setMethod($hd->shipping_method_code);
+            $method->setMethodTitle('Home Delivery');
 
-          $method->setMethod($hd->shipping_method_code);
-          $method->setMethodTitle('Home Delivery');
+            $amount = $this->getConfigData('price');
 
-          $amount = $this->getConfigData('price');
+            $method->setPrice($amount);
+            $method->setCost($amount);
 
-          $method->setPrice($amount);
-          $method->setCost($amount);
-
-          $result->append($method);
+            $result->append($method);
+          }
         }
         return $result;
 

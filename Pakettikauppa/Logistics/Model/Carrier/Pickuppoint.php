@@ -67,27 +67,28 @@ class Pickuppoint extends \Magento\Shipping\Model\Carrier\AbstractCarrier implem
 
         $zip = $this->dataHelper->getZip();
         if ($zip) {
-        $pickuppoints = $this->apiHelper->getPickuppoints($zip);
+          $pickuppoints = $this->apiHelper->getPickuppoints($zip);
+          if(count($pickuppoints)>0){
+            foreach ($pickuppoints as $pp) {
+              /** @var \Magento\Quote\Model\Quote\Address\RateResult\Method $method */
+              $method = $this->_rateMethodFactory->create();
 
-        foreach ($pickuppoints as $pp) {
-          /** @var \Magento\Quote\Model\Quote\Address\RateResult\Method $method */
-          $method = $this->_rateMethodFactory->create();
+              $method->setCarrier('pktkp_pickuppoint');
+              $method->setCarrierTitle($pp->provider." - ".$pp->name.": ".$pp->street_address.", ".$pp->postcode.", ".$pp->city);
 
-          $method->setCarrier('pktkp_pickuppoint');
-          $method->setCarrierTitle($pp->provider." - ".$pp->name.": ".$pp->street_address.", ".$pp->postcode.", ".$pp->city);
+              $method->setMethod($pp->pickup_point_id);
+              $method->setMethodTitle('Pickuppoint');
 
-          $method->setMethod($pp->pickup_point_id);
-          $method->setMethodTitle('Pickuppoint');
+              $amount = $this->getConfigData('price');
 
-          $amount = $this->getConfigData('price');
+              $method->setPrice($amount);
+              $method->setCost($amount);
 
-          $method->setPrice($amount);
-          $method->setCost($amount);
-
-          $result->append($method);
-        }
-        return $result;
+              $result->append($method);
+            }
+          }
       }
+      return $result;
     }
 
     public function isTrackingAvailable()
