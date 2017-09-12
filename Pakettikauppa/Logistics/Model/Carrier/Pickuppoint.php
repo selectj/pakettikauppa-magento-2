@@ -92,10 +92,10 @@ class Pickuppoint extends \Magento\Shipping\Model\Carrier\AbstractCarrier implem
               if($db_title == ''){
                 $title = $conf_title;
               }else{
-                $tile = $db_title;
+                $title = $db_title;
               }
               $method->setMethod($pp->pickup_point_id);
-              $method->setMethodTitle($tile);
+              $method->setMethodTitle($title);
               $method->setPrice($price);
               $method->setCost($price);
 
