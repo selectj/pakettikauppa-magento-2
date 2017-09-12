@@ -7,7 +7,7 @@
                 <sallowspecific>0</sallowspecific>
                 <model>Pakettikauppa\Logistics\Model\Carrier\Pickuppoint</model>
                 <name>Pakettikauppa Shipping</name>
-                <price>15.00</price>
+                <price>10.00</price>
                 <title>Pickuppoint</title>
                 <type>I</type>
                 <specificerrmsg>This shipping method is not available. To use this shipping method, please contact us.</specificerrmsg>
@@ -17,7 +17,7 @@
                 <sallowspecific>0</sallowspecific>
                 <model>Pakettikauppa\Logistics\Model\Carrier\Homedelivery</model>
                 <name>Pakettikauppa Shipping</name>
-                <price>25.00</price>
+                <price>10.00</price>
                 <title>Home Delivery</title>
                 <type>I</type>
                 <specificerrmsg>This shipping method is not available. To use this shipping method, please contact us.</specificerrmsg>

@@ -19,6 +19,7 @@ use Pakettikauppa\Shipment\Parcel;
 use Pakettikauppa\Client;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Psr\Log\LoggerInterface;
 
 
 
@@ -29,11 +30,14 @@ class Api extends \Magento\Framework\App\Helper\AbstractHelper
     protected $secret;
     protected $development;
     protected $active;
+    private   $logger;
 
     function __construct(
+      LoggerInterface $logger,
       DirectoryList $directory_list,
       ScopeConfigInterface $scopeConfig
     ){
+        $this->logger = $logger;
         $this->directory_list = $directory_list;
         $this->scopeConfig = $scopeConfig;
         $this->active = $this->scopeConfig->getValue('pakettikauppa_config/store/active');
@@ -69,28 +73,33 @@ class Api extends \Magento\Framework\App\Helper\AbstractHelper
       $client = $this->client;
       $result = [];
       $methods = json_decode($client->listShippingMethods());
-      if($all == true){
-        return $methods;
-      }else{
-        $counter = 0;
-        foreach($methods as $method){
-          if(count($method->additional_services)>0){
-            foreach($method->additional_services as $service){
-              if($service->service_code == '2106'){
-                $method->name = null;
-                $method->shipping_method_code = null;
-                $method->description = null;
-                $method->service_provider = null;
-                $method->additional_services = null;
+
+      if(count($methods)>0){
+        if($all == true){
+          return $methods;
+        }else{
+          $counter = 0;
+          foreach($methods as $method){
+            if(count($method->additional_services)>0){
+              foreach($method->additional_services as $service){
+                if($service->service_code == '2106'){
+                  $method->name = null;
+                  $method->shipping_method_code = null;
+                  $method->description = null;
+                  $method->service_provider = null;
+                  $method->additional_services = null;
+                }
               }
             }
           }
-        }
-        foreach($methods as $method){
-          if($method->name != null){
-            $result[] = $method;
+          foreach($methods as $method){
+            if($method->name != null){
+              $result[] = $method;
+            }
           }
+          return $result;
         }
+      }else{
         return $result;
       }
     }

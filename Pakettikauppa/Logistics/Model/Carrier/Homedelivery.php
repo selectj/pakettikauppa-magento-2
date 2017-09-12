@@ -5,6 +5,7 @@ use Magento\Quote\Model\Quote\Address\RateRequest;
 use Magento\Shipping\Model\Rate\Result;
 use Pakettikauppa\Logistics\Helper\Data;
 use Pakettikauppa\Logistics\Helper\Api;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 
 class Homedelivery extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
     \Magento\Shipping\Model\Carrier\CarrierInterface
@@ -23,19 +24,20 @@ class Homedelivery extends \Magento\Shipping\Model\Carrier\AbstractCarrier imple
      * @param array $data
      */
     public function __construct(
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Quote\Model\Quote\Address\RateResult\ErrorFactory $rateErrorFactory,
         \Psr\Log\LoggerInterface $logger,
         \Magento\Shipping\Model\Rate\ResultFactory $rateResultFactory,
         \Magento\Quote\Model\Quote\Address\RateResult\MethodFactory $rateMethodFactory,
         Api $apiHelper,
         Data $dataHelper,
+        ScopeConfigInterface $scopeConfig,
         array $data = []
     ) {
         $this->dataHelper = $dataHelper;
         $this->apiHelper = $apiHelper;
         $this->_rateResultFactory = $rateResultFactory;
         $this->_rateMethodFactory = $rateMethodFactory;
+        $this->scopeConfig = $scopeConfig;
         parent::__construct($scopeConfig, $rateErrorFactory, $logger, $data);
     }
 
@@ -60,23 +62,37 @@ class Homedelivery extends \Magento\Shipping\Model\Carrier\AbstractCarrier imple
         $result = $this->_rateResultFactory->create();
 
         $homedelivery = $this->apiHelper->getHomeDelivery();
+        if(count($homedelivery)>0){
+          foreach ($homedelivery as $hd) {
+            /** @var \Magento\Quote\Model\Quote\Address\RateResult\Method $method */
+            $method = $this->_rateMethodFactory->create();
+            $method->setCarrier('pktkp_homedelivery');
+            $method->setCarrierTitle($hd->service_provider);
+            $method->setMethod($hd->shipping_method_code);
 
-        foreach ($homedelivery as $hd) {
-          /** @var \Magento\Quote\Model\Quote\Address\RateResult\Method $method */
-          $method = $this->_rateMethodFactory->create();
+            $db_price =  $this->scopeConfig->getValue('carriers/homedelivery/price');
+            $db_title =  $this->scopeConfig->getValue('carriers/homedelivery/title');
 
-          $method->setCarrier('pktkp_homedelivery');
-          $method->setCarrierTitle($hd->service_provider);
 
-          $method->setMethod($hd->shipping_method_code);
-          $method->setMethodTitle('Home Delivery');
+            $conf_price = $this->getConfigData('price');
+            $conf_title = $this->getConfigData('title');
 
-          $amount = $this->getConfigData('price');
+            if($db_price == ''){
+              $price = $conf_price;
+            }else{
+              $price = $db_price;
+            }
 
-          $method->setPrice($amount);
-          $method->setCost($amount);
-
-          $result->append($method);
+            if($db_title == ''){
+              $title = $conf_title;
+            }else{
+              $title = $db_title;
+            }
+            $method->setMethodTitle($title);
+            $method->setPrice($price);
+            $method->setCost($price);
+            $result->append($method);
+          }
         }
         return $result;
 
