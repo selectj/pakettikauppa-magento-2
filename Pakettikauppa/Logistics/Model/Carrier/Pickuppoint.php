@@ -95,7 +95,7 @@ class Pickuppoint extends \Magento\Shipping\Model\Carrier\AbstractCarrier implem
                 $title = $db_title;
               }
               $method->setMethod($pp->pickup_point_id);
-              $method->setMethodTitle($tile);
+              $method->setMethodTitle($title);
               $method->setPrice($price);
               $method->setCost($price);
 
