@@ -9,11 +9,20 @@ define([
     return Component.extend({
         initialize: function () {
             this._super();
+            jQuery(document).keypress(function(e) {
+                if(e.which == 13) {
+                  if (jQuery('#pickuppoint-form input.input-text').is(':focus')) {
+                    e.preventDefault();
+                    jQuery("#pktkp_getpickups").click();
+                    return false;
+                  }
+                }
+            });
             // component initialization logic
             return this;
         },
 
-        onSubmit: function() {
+        getPickups: function() {
           if (jQuery('#pickuppoint-form input.input-text').length) {
             if (jQuery('#pickuppoint-form input.input-text').val().length) {
 
