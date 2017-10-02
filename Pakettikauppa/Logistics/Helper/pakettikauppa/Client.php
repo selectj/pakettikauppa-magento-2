@@ -145,11 +145,11 @@ class Client
      * @param null $service_provider
      * @return \Psr\Http\Message\StreamInterface
      */
-    public function searchPickupPoints($postcode, $street_address = null, $country = null, $service_provider = null)
+    public function searchPickupPoints($street_address, $postcode = null, $country = null, $service_provider = null)
     {
         $post_params = array(
-            'postcode'          => $postcode
-            // 'address'           => $street_address,
+            // 'postcode'          => $postcode
+            'address'           => $street_address
             // 'country'           => $country,
             // 'service_provider'  => $service_provider
         );
