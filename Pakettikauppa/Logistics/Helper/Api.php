@@ -165,7 +165,6 @@ class Api extends \Magento\Framework\App\Helper\AbstractHelper
         if ($client->createTrackingCode($shipment)) {
             if($client->fetchShippingLabel($shipment)){
               $dir = $this->directory_list->getRoot() . "/pub/labels";
-              // $dir = '/Users/aleksandargnjatic/Desktop';
               if (!is_dir($dir)) {
                 mkdir($dir);
               }
