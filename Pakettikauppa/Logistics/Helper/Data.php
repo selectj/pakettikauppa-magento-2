@@ -15,7 +15,12 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     public function getCarrierCode($carrier,$name){
       $carrier = preg_replace('/[^\00-\255]+/u', '',strtolower(preg_replace('/\s+/', '', $carrier)));
       $name = preg_replace('/[^\00-\255]+/u', '',strtolower(preg_replace('/\s+/', '', $name)));
-      return $carrier.'_'.$name;
+      $code = $carrier.'_'.$name;
+      if($code == 'posti_palautus'){
+        return false;
+      }else{
+        return $code;
+      }
     }
 
     public function getZip(){
