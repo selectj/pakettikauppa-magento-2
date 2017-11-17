@@ -52,31 +52,40 @@ class Homedelivery extends \Magento\Shipping\Model\Carrier\AbstractCarrier imple
     $homedelivery = $this->apiHelper->getHomeDelivery();
     if(count($homedelivery)>0){
       foreach ($homedelivery as $hd) {
-        $method = $this->rateMethodFactory->create();
-        $method->setCarrier('pktkp_homedelivery');
-        $method->setCarrierTitle($hd->service_provider);
-        $method->setMethod($hd->shipping_method_code);
-        if(property_exists($hd, 'icon')){
-          $data[$hd->service_provider] = '<img src="'.$hd->icon.'" alt="'.$hd->service_provider.'"/>';
-        }
-        $db_price =  $this->scopeConfig->getValue('carriers/homedelivery/price');
-        $db_title =  $this->scopeConfig->getValue('carriers/homedelivery/title');
-        $conf_price = $this->getConfigData('price');
-        $conf_title = $this->getConfigData('title');
-        if($db_price == ''){
-          $price = $conf_price;
+
+        $carrier_code = $this->dataHelper->getCarrierCode($hd->service_provider,$hd->name);
+        if($carrier_code){
+          $enabled = $this->scopeConfig->getValue('carriers/'.$carrier_code.'/active');
         }else{
-          $price = $db_price;
+          $enabled = 0;
         }
-        if($db_title == ''){
-          $title = $conf_title;
-        }else{
-          $title = $db_title;
+        if($enabled == 1){
+          $method = $this->rateMethodFactory->create();
+          $method->setCarrier('pktkp_homedelivery');
+          $method->setCarrierTitle($hd->service_provider);
+          $method->setMethod($hd->shipping_method_code);
+          if(property_exists($hd, 'icon')){
+            $data[$hd->service_provider] = '<img src="'.$hd->icon.'" alt="'.$hd->service_provider.'"/>';
+          }
+          $db_price =  $this->scopeConfig->getValue('carriers/'.$carrier_code.'/price');
+          $db_title =  $this->scopeConfig->getValue('carriers/'.$carrier_code.'/title');
+          $conf_price = $this->getConfigData('price');
+          $conf_title = $this->getConfigData('title');
+          if($db_price == ''){
+            $price = $conf_price;
+          }else{
+            $price = $db_price;
+          }
+          if($db_title == ''){
+            $title = $conf_title;
+          }else{
+            $title = $db_title;
+          }
+          $method->setMethodTitle($title);
+          $method->setPrice($price);
+          $method->setCost($price);
+          $result->append($method);
         }
-        $method->setMethodTitle($title);
-        $method->setPrice($price);
-        $method->setCost($price);
-        $result->append($method);
       }
     }
     $this->registry->register('pktkp_icons', $data);

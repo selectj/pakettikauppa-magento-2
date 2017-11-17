@@ -54,31 +54,42 @@ class Pickuppoint extends \Magento\Shipping\Model\Carrier\AbstractCarrier implem
       $pickuppoints = $this->apiHelper->getPickuppoints($zip);
       if(count($pickuppoints)>0){
         foreach ($pickuppoints as $pp) {
-          $method = $this->rateMethodFactory->create();
-          $method->setCarrier('pktkp_pickuppoint');
-          $method->setCarrierTitle($pp->provider." - ".$pp->name.": ".$pp->street_address.", ".$pp->postcode.", ".$pp->city);
-          if(property_exists($pp,'provider_logo')){
-            $data[$pp->provider." - ".$pp->name.": ".$pp->street_address.", ".$pp->postcode.", ".$pp->city] = '<img src="'.$pp->provider_logo.'" alt="'.$pp->provider.'"/>';
-          }
-          $db_price =  $this->scopeConfig->getValue('carriers/pickuppoint/price');
-          $db_title =  $this->scopeConfig->getValue('carriers/pickuppoint/title');
-          $conf_price = $this->getConfigData('price');
-          $conf_title = $this->getConfigData('title');
-          if($db_price == ''){
-            $price = $conf_price;
+
+          $carrier_code = $this->dataHelper->getCarrierCode($pp->provider,'pickuppoint');
+          if($carrier_code){
+            $enabled = $this->scopeConfig->getValue('carriers/'.$carrier_code.'/active');
           }else{
-            $price = $db_price;
+            $enabled = 0;
           }
-          if($db_title == ''){
-            $title = $conf_title;
-          }else{
-            $title = $db_title;
+
+          if($enabled == 1){
+            $method = $this->rateMethodFactory->create();
+            $method->setCarrier('pktkp_pickuppoint');
+            $method->setCarrierTitle($pp->provider." - ".$pp->name.": ".$pp->street_address.", ".$pp->postcode.", ".$pp->city);
+            if(property_exists($pp,'provider_logo')){
+              $data[$pp->provider." - ".$pp->name.": ".$pp->street_address.", ".$pp->postcode.", ".$pp->city] = '<img src="'.$pp->provider_logo.'" alt="'.$pp->provider.'"/>';
+            }
+            $db_price =  $this->scopeConfig->getValue('carriers/'.$carrier_code.'/price');
+            $db_title =  $this->scopeConfig->getValue('carriers/'.$carrier_code.'/title');
+            $conf_price = $this->getConfigData('price');
+            $conf_title = $this->getConfigData('title');
+            if($db_price == ''){
+              $price = $conf_price;
+            }else{
+              $price = $db_price;
+            }
+            if($db_title == ''){
+              $title = $conf_title;
+            }else{
+              $title = $db_title;
+            }
+            $method->setMethod($pp->pickup_point_id);
+            $method->setMethodTitle($title);
+            $method->setPrice($price);
+
+            $method->setCost($price);
+            $result->append($method);
           }
-          $method->setMethod($pp->pickup_point_id);
-          $method->setMethodTitle($title);
-          $method->setPrice($price);
-          $method->setCost($price);
-          $result->append($method);
         }
       }
     }

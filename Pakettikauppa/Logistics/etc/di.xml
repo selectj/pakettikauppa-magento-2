@@ -3,4 +3,5 @@
     <type name="Magento\Quote\Model\Cart\ShippingMethodConverter">
         <plugin name="add_image_carrier" type="Pakettikauppa\Logistics\Plugin\Carrier\Image" disabled="false" sortOrder="30"/>
     </type>
+    <preference for="Magento\Shipping\Model\Rate\Result" type="Pakettikauppa\Logistics\Model\Rate\Result" />
 </config>
