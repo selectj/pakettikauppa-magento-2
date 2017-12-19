@@ -20,8 +20,10 @@ class Homedelivery extends \Magento\Shipping\Model\Carrier\AbstractCarrier imple
     \Magento\Shipping\Model\Rate\ResultFactory $rateResultFactory,
     \Magento\Sales\Model\Order\Shipment\Track $trackFactory,
     \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
+    \Magento\Checkout\Model\Session $session,
     array $data = []
   ) {
+    $this->session = $session;
     $this->registry = $registry;
     $this->storeManager = $storeManager;
     $this->dataHelper = $dataHelper;
@@ -51,6 +53,10 @@ class Homedelivery extends \Magento\Shipping\Model\Carrier\AbstractCarrier imple
     }
     $homedelivery = $this->apiHelper->getHomeDelivery();
     if(count($homedelivery)>0){
+      $cart_value = 0;
+      foreach($this->session->getQuote()->getAllItems() as $item){
+        $cart_value = $cart_value + $item->getPrice();
+      }
       foreach ($homedelivery as $hd) {
 
         $carrier_code = $this->dataHelper->getCarrierCode($hd->service_provider,$hd->name);
@@ -80,6 +86,13 @@ class Homedelivery extends \Magento\Shipping\Model\Carrier\AbstractCarrier imple
             $title = $conf_title;
           }else{
             $title = $db_title;
+          }
+
+          // DISCOUNT PRICE
+          $minimum =  $this->scopeConfig->getValue('carriers/'.$carrier_code.'/cart_price');
+          $new_price =  $this->scopeConfig->getValue('carriers/'.$carrier_code.'/new_price');
+          if($cart_value && $minimum && $cart_value >= $minimum){
+            $price = $new_price;
           }
           $method->setMethodTitle($title);
           $method->setPrice($price);

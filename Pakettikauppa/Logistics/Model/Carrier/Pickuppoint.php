@@ -20,8 +20,10 @@ class Pickuppoint extends \Magento\Shipping\Model\Carrier\AbstractCarrier implem
     \Magento\Shipping\Model\Rate\ResultFactory $rateResultFactory,
     \Magento\Sales\Model\Order\Shipment\Track $trackFactory,
     \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
+    \Magento\Checkout\Model\Session $session,
     array $data = []
   ) {
+    $this->session = $session;
     $this->registry = $registry;
     $this->storeManager = $storeManager;
     $this->dataHelper = $dataHelper;
@@ -53,6 +55,11 @@ class Pickuppoint extends \Magento\Shipping\Model\Carrier\AbstractCarrier implem
     if ($zip) {
       $pickuppoints = $this->apiHelper->getPickuppoints($zip);
       if(count($pickuppoints)>0){
+        $cart_value = 0;
+        foreach($this->session->getQuote()->getAllItems() as $item){
+          $cart_value = $cart_value + $item->getPrice();
+        }
+
         foreach ($pickuppoints as $pp) {
 
           $carrier_code = $this->dataHelper->getCarrierCode($pp->provider,'pickuppoint');
@@ -83,6 +90,14 @@ class Pickuppoint extends \Magento\Shipping\Model\Carrier\AbstractCarrier implem
             }else{
               $title = $db_title;
             }
+
+            // // DISCOUNT PRICE
+            $minimum =  $this->scopeConfig->getValue('carriers/'.$carrier_code.'/cart_price');
+            $new_price =  $this->scopeConfig->getValue('carriers/'.$carrier_code.'/new_price');
+            if($cart_value && $minimum && $cart_value >= $minimum){
+              $price = $new_price;
+            }
+
             $method->setMethod($pp->pickup_point_id);
             $method->setMethodTitle($title);
             $method->setPrice($price);

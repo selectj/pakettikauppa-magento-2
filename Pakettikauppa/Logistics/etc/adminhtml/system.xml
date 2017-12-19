@@ -55,6 +55,14 @@
                 <field id="title" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Title</label>
                 </field>
+                <field id="cart_price" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Minimum cart price for discount shipping</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
+                <field id="new_price" translate="label" type="text" sortOrder="11" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Shipping price with discount</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
             </group>
             <group id="posti_kotipaketti" translate="label" type="text" sortOrder="190" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Posti - Kotipaketti</label>
@@ -68,6 +76,14 @@
                 </field>
                 <field id="title" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Title</label>
+                </field>
+                <field id="cart_price" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Minimum cart price for discount shipping</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
+                <field id="new_price" translate="label" type="text" sortOrder="11" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Shipping price with discount</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
                 </field>
             </group>
             <group id="posti_pickuppoint" translate="label" type="text" sortOrder="191" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -83,6 +99,14 @@
                 <field id="title" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Title</label>
                 </field>
+                <field id="cart_price" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Minimum cart price for discount shipping</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
+                <field id="new_price" translate="label" type="text" sortOrder="11" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Shipping price with discount</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
             </group>
             <group id="matkahuolto_pickuppoint" translate="label" type="text" sortOrder="193" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>(Pickup Point) Matkahuolto - Verkkopaketti</label>
@@ -96,6 +120,14 @@
                 </field>
                 <field id="title" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Title</label>
+                </field>
+                <field id="cart_price" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Minimum cart price for discount shipping</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
+                <field id="new_price" translate="label" type="text" sortOrder="11" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Shipping price with discount</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
                 </field>
             </group>
             <group id="matkahuolto_jakopaketti" translate="label" type="text" sortOrder="194" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -111,6 +143,14 @@
                 <field id="title" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Title</label>
                 </field>
+                <field id="cart_price" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Minimum cart price for discount shipping</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
+                <field id="new_price" translate="label" type="text" sortOrder="11" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Shipping price with discount</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
             </group>
             <group id="matkahuolto_bussipaketti" translate="label" type="text" sortOrder="195" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Matkahuolto - Bussipaketti</label>
@@ -124,6 +164,14 @@
                 </field>
                 <field id="title" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Title</label>
+                </field>
+                <field id="cart_price" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Minimum cart price for discount shipping</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
+                <field id="new_price" translate="label" type="text" sortOrder="11" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Shipping price with discount</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
                 </field>
             </group>
             <group id="gls_eurobusiness" translate="label" type="text" sortOrder="196" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -139,6 +187,14 @@
                 <field id="title" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Title</label>
                 </field>
+                <field id="cart_price" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Minimum cart price for discount shipping</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
+                <field id="new_price" translate="label" type="text" sortOrder="11" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Shipping price with discount</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
             </group>
             <group id="gls_eurobusinesspallet" translate="label" type="text" sortOrder="197" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>GLS - Eurobusinesspallet</label>
@@ -152,6 +208,14 @@
                 </field>
                 <field id="title" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Title</label>
+                </field>
+                <field id="cart_price" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Minimum cart price for discount shipping</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
+                <field id="new_price" translate="label" type="text" sortOrder="11" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Shipping price with discount</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
                 </field>
             </group>
             <group id="gls_express" translate="label" type="text" sortOrder="198" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -167,6 +231,14 @@
                 <field id="title" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Title</label>
                 </field>
+                <field id="cart_price" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Minimum cart price for discount shipping</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
+                <field id="new_price" translate="label" type="text" sortOrder="11" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Shipping price with discount</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
             </group>
             <group id="gls_globaleconomy" translate="label" type="text" sortOrder="199" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>GLS - Globaleconomy</label>
@@ -181,6 +253,14 @@
                 <field id="title" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Title</label>
                 </field>
+                <field id="cart_price" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Minimum cart price for discount shipping</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
+                <field id="new_price" translate="label" type="text" sortOrder="11" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Shipping price with discount</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
             </group>
             <group id="dbschenker_pickuppoint" translate="label" type="text" sortOrder="200" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>(Pickup Point) DBSchekner Noutopistepaketti</label>
@@ -194,6 +274,14 @@
                 </field>
                 <field id="title" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Title</label>
+                </field>
+                <field id="cart_price" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Minimum cart price for discount shipping</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
+                <field id="new_price" translate="label" type="text" sortOrder="11" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Shipping price with discount</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
                 </field>
             </group>
         </section>
