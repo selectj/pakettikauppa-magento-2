@@ -22,7 +22,7 @@ class Client
         if(isset($params['test_mode']) and $params['test_mode'] === true) {
             $this->api_key      = '00000000-0000-0000-0000-000000000000';
             $this->secret       = '1234567890ABCDEF';
-            $this->base_uri     = 'https://apitest.pakettikauppa.fi/';
+            $this->base_uri     = 'https://apitest.pakettikauppa.fi';
         } else {
 
             if(!isset($params['api_key']))
@@ -33,7 +33,7 @@ class Client
 
             $this->api_key      = $params['api_key'];
             $this->secret       = $params['secret'];
-            $this->base_uri     = 'https://api.pakettikauppa.fi/';
+            $this->base_uri     = 'https://api.pakettikauppa.fi';
         }
     }
 
@@ -115,7 +115,7 @@ class Client
 
     /**
      * @param $tracking_code
-     * @return \Psr\Http\Message\StreamInterface
+     * @return mixed
      */
     public function getShipmentStatus($tracking_code)
     {
@@ -123,7 +123,7 @@ class Client
     }
 
     /**
-     * @return \Psr\Http\Message\StreamInterface
+     * @return mixed
      */
     public function listAdditionalServices()
     {
@@ -131,7 +131,7 @@ class Client
     }
 
     /**
-     * @return \Psr\Http\Message\StreamInterface
+     * @return mixed
      */
     public function listShippingMethods()
     {
@@ -139,19 +139,42 @@ class Client
     }
 
     /**
-     * @param $postcode
-     * @param null $street_address
-     * @param null $country
-     * @param null $service_provider
-     * @return \Psr\Http\Message\StreamInterface
+     * Search pickup points.
+     *
+     * @param int $postcode
+     * @param string $street_address
+     * @param string $country
+     * @param string $service_provider Limits results for to certain providers possible values: Posti, Matkahuolto, Db Schenker.
+     * @param int $limit 1 - 15
+     * @return mixed
      */
-    public function searchPickupPoints($street_address, $postcode = null, $country = null, $service_provider = null)
+    public function searchPickupPoints($postcode = null, $street_address = null, $country = null, $service_provider = null, $limit = 5)
     {
         $post_params = array(
-            // 'postcode'          => $postcode
-            'address'           => $street_address
-            // 'country'           => $country,
-            // 'service_provider'  => $service_provider
+            'postcode'          => (string) $postcode,
+            'address'           => (string) $street_address,
+            'country'           => (string) $country,
+            'service_provider'  => (string) $service_provider,
+            'limit'             => (int) $limit
+        );
+
+        return $this->doPost('/pickup-points/search', $post_params);
+    }
+
+    /**
+     * Searches pickup points with a text query. For best results the query should contain a full address
+     *
+     * @param $query_text Text containing the full address, for example: "Keskustori 1, 33100 Tampere"
+     * @param string $service_provider $service_provider Limits results for to certain providers possible values: Posti, Matkahuolto, Db Schenker.
+     * @param int $limit 1 - 15
+     * @return mixed
+     */
+    public function searchPickupPointsByText($query_text, $service_provider = null, $limit = 5)
+    {
+        $post_params = array(
+            'query'             => (string) $query_text,
+            'service_provider'  => (string) $service_provider,
+            'limit'             => (int) $limit
         );
 
         return $this->doPost('/pickup-points/search', $post_params);
