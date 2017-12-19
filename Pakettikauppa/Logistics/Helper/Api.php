@@ -30,6 +30,7 @@ class Api extends \Magento\Framework\App\Helper\AbstractHelper
     protected $secret;
     protected $development;
     protected $active;
+    protected $pickup_methods;
     private   $logger;
 
     function __construct(
@@ -37,6 +38,11 @@ class Api extends \Magento\Framework\App\Helper\AbstractHelper
       DirectoryList $directory_list,
       ScopeConfigInterface $scopeConfig
     ){
+        $this->pickup_methods = array(
+          array('id' => 'posti', 'name' => 'Posti'),
+          array('id' => 'matkahuolto', 'name' => 'Matkahuolto'),
+          array('id' => 'dbschenker', 'name' => 'DB Schenker')
+        );
         $this->logger = $logger;
         $this->directory_list = $directory_list;
         $this->scopeConfig = $scopeConfig;
@@ -61,11 +67,16 @@ class Api extends \Magento\Framework\App\Helper\AbstractHelper
         }
       }
 
-    public function getPickuppoints($zip_code)
+    public function getPickuppoints($query)
     {
-      error_reporting(E_ALL|E_STRICT);
-      ini_set('display_errors', 1);
-      $result = $this->client->searchPickupPoints($zip_code);
+      $allowed = array();
+      foreach($this->pickup_methods as $method){
+        if($this->scopeConfig->getValue('carriers/'.$method['id'].'_pickuppoint/active') == 1){
+          $allowed[] = $method['name'];
+        }
+      }
+
+      $result = $this->client->searchPickupPointsByText($query,implode(', ', $allowed),10);
       return json_decode($result);
     }
 
