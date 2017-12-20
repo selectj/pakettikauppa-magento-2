@@ -55,7 +55,7 @@ class Homedelivery extends \Magento\Shipping\Model\Carrier\AbstractCarrier imple
     if(count($homedelivery)>0){
       $cart_value = 0;
       foreach($this->session->getQuote()->getAllItems() as $item){
-        $cart_value = $cart_value + $item->getPrice();
+        $cart_value = $cart_value + ($item->getPrice() * $item->getQty());
       }
       foreach ($homedelivery as $hd) {
 

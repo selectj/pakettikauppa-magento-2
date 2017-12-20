@@ -57,7 +57,7 @@ class Pickuppoint extends \Magento\Shipping\Model\Carrier\AbstractCarrier implem
       if(count($pickuppoints)>0){
         $cart_value = 0;
         foreach($this->session->getQuote()->getAllItems() as $item){
-          $cart_value = $cart_value + $item->getPrice();
+          $cart_value = $cart_value + ($item->getPrice() * $item->getQty());
         }
 
         foreach ($pickuppoints as $pp) {
