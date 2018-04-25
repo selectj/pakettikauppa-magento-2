@@ -7,7 +7,7 @@ class Client
     private $api_key;
     private $secret;
     private $base_uri;
-    private $user_agent = 'pk-client-lib/0.1';
+    private $user_agent = 'pk-client-lib/0.2';
 
     /**
      * Client constructor.
@@ -22,7 +22,8 @@ class Client
         if(isset($params['test_mode']) and $params['test_mode'] === true) {
             $this->api_key      = '00000000-0000-0000-0000-000000000000';
             $this->secret       = '1234567890ABCDEF';
-            $this->base_uri     = 'https://apitest.pakettikauppa.fi';
+            $this->base_uri     = 'http://localhost:81';
+//            $this->base_uri     = 'https://apitest.pakettikauppa.fi';
         } else {
 
             if(!isset($params['api_key']))
@@ -72,7 +73,7 @@ class Client
         return true;
     }
 
-    /**
+    /**a
      * Fetches the shipping label pdf for a given Shipment and
      * saves it as base64 encoded string to $pdf parameter on the Shipment.
      * The shipment must have $tracking_code and $reference set.
@@ -113,6 +114,47 @@ class Client
         return true;
     }
 
+    /**a
+     * Fetches the shipping label pdf for a given Shipment and
+     * saves it as base64 encoded string to $pdf parameter on the Shipment.
+     * The shipment must have $tracking_code and $reference set.
+     *
+     * @param Shipment $shipment
+     * @return bool
+     * @throws \Exception
+     */
+    public function fetchShippingLabels($trackingCodes)
+    {
+        $id     = str_replace('.', '', microtime(true));
+        $xml    = new \SimpleXMLElement('<eChannel/>');
+
+        $routing = $xml->addChild('ROUTING');
+        $routing->addChild('Routing.Account', $this->api_key);
+        $routing->addChild('Routing.Id', $id);
+        $routing->addChild('Routing.Key', md5("{$this->api_key}{$id}{$this->secret}"));
+
+        $label = $xml->addChild('PrintLabel');
+        $label['responseFormat'] = 'File';
+
+        foreach($trackingCodes as $trackingCode) {
+            $label->addChild('TrackingCode', $trackingCode);
+        }
+
+        $response = $this->doPost('/prinetti/get-shipping-label', null, $xml->asXML());
+
+        $response_xml = @simplexml_load_string($response);
+
+        if(!$response_xml) {
+            throw new \Exception("Failed to load response xml");
+        }
+
+        if($response_xml->{'response.status'} != 0) {
+            throw new \Exception("Error: {$response_xml->{'response.status'}}, {$response_xml->{'response.message'}}");
+        }
+
+        return $response_xml;
+    }
+
     /**
      * @param $tracking_code
      * @return mixed
@@ -150,6 +192,10 @@ class Client
      */
     public function searchPickupPoints($postcode = null, $street_address = null, $country = null, $service_provider = null, $limit = 5)
     {
+        if ( ($postcode == null && $street_address == null) || (trim($postcode) == '' && trim($street_address) == '') ) {
+            return '[]';
+        }
+
         $post_params = array(
             'postcode'          => (string) $postcode,
             'address'           => (string) $street_address,
@@ -171,6 +217,10 @@ class Client
      */
     public function searchPickupPointsByText($query_text, $service_provider = null, $limit = 5)
     {
+        if ( $query_text == null || trim($query_text) == '' ) {
+            return '[]';
+        }
+
         $post_params = array(
             'query'             => (string) $query_text,
             'service_provider'  => (string) $service_provider,
@@ -218,7 +268,7 @@ class Client
                 CURLOPT_HTTPHEADER      =>  $headers,
                 CURLOPT_POSTFIELDS      =>  $post_data
         );
-
+        
         $ch = curl_init();
         curl_setopt_array($ch, $options);
         $response = curl_exec($ch);
