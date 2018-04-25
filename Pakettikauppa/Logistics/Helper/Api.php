@@ -121,6 +121,7 @@ class Api extends \Magento\Framework\App\Helper\AbstractHelper
     {
         $sender = new Sender();
         $store = $order->getStoreId();
+
         $_sender_name = $this->scopeConfig->getValue('pakettikauppa_config/store/name');
         $_sender_address = $this->scopeConfig->getValue('pakettikauppa_config/store/address');
         $_sender_city = $this->scopeConfig->getValue('pakettikauppa_config/store/city');
@@ -131,49 +132,46 @@ class Api extends \Magento\Framework\App\Helper\AbstractHelper
         $sender->setPostcode($_sender_postcode);
         $sender->setCity($_sender_city);
         $sender->setCountry($_sender_country);
+
         $shipping_data = $order->getShippingAddress();
+
         $firstname = $shipping_data->getData('firstname');
         $middlename = $shipping_data->getData('middlename');
         $lastname = $shipping_data->getData('lastname');
         $name = $firstname . ' ' . $middlename . ' ' . $lastname;
-        if (strpos($order->getShippingMethod(), 'pickuppoint') !== false) {
-            $name = $order->getData('pickup_point_name');
-            $_receiver_address = $order->getData('pickup_point_street_address');
-            $_receiver_postcode = $order->getData('pickup_point_postcode');
-            $_receiver_city = $order->getData('pickup_point_city');
-            $_receiver_country = $order->getData('pickup_point_country');
-        } else {
-            $name = $firstname . ' ' . $middlename . ' ' . $lastname;
-            $_receiver_address = $shipping_data->getData('street');
-            $_receiver_postcode = $shipping_data->getData('postcode');
-            $_receiver_city = $shipping_data->getData('city');
-            $_receiver_country = $shipping_data->getData('country_id');
-        }
+
         $receiver = new Receiver();
         $receiver->setName1($name);
-        $receiver->setAddr1($_receiver_address);
-        $receiver->setPostcode($_receiver_postcode);
-        $receiver->setCity($_receiver_city);
-        $receiver->setCountry($_receiver_country);
+        $receiver->setAddr1($shipping_data->getData('street'));
+        $receiver->setPostcode($shipping_data->getData('postcode'));
+        $receiver->setCity($shipping_data->getData('city'));
+        $receiver->setCountry($shipping_data->getData('country_id'));
         $receiver->setEmail($shipping_data->getData('email'));
         $receiver->setPhone($shipping_data->getData('telephone'));
+
         $info = new Info();
         $info->setReference($order->getIncrementId());
-        $additional_service = new AdditionalService();
-        // $additional_service->setServiceCode(3104); // fragile
+
         $parcel = new Parcel();
         $parcel->setReference($order->getIncrementId());
         $parcel->setWeight($order->getData('weight')); // kg
         // GET VOLUME
         $parcel->setVolume(0.001); // m3
-        //$parcel->setContents('Stuff and thingies');
+
         $shipment = new Shipment();
         $shipment->setShippingMethod($order->getData('paketikauppa_smc')); // shipping_method_code that you can get by using listShippingMethods()
         $shipment->setSender($sender);
         $shipment->setReceiver($receiver);
         $shipment->setShipmentInfo($info);
         $shipment->addParcel($parcel);
-        $shipment->addAdditionalService($additional_service);
+
+        if (strpos($order->getShippingMethod(), 'pickuppoint') !== false) {
+            $additional_service = new AdditionalService();
+            $additional_service->setServiceCode(2106);
+            $additional_service->addSpecifier('pickup_point_id', $order->getData('pickup_point_id'));
+            $shipment->addAdditionalService($additional_service);
+        }
+
         $client = $this->client;
         try {
             if ($client->createTrackingCode($shipment)) {
