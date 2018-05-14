@@ -10,6 +10,7 @@ require_once(__DIR__ . '/pakettikauppa/Shipment/AdditionalService.php');
 require_once(__DIR__ . '/pakettikauppa/Shipment/Info.php');
 require_once(__DIR__ . '/pakettikauppa/Shipment/Parcel.php');
 require_once(__DIR__ . '/pakettikauppa/Client.php');
+require_once(__DIR__ . '/pakettikauppa/SimpleXMLElement.php');
 
 use Pakettikauppa\Shipment;
 use Pakettikauppa\Shipment\Sender;
