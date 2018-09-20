@@ -5,7 +5,7 @@ namespace Pakettikauppa\Logistics\Controller\Index;
 
 use Magento\Framework\App\Action\Context;
 use Magento\Checkout\Model\Cart;
-use Pakettikauppa\Logistics\Helper\API;
+use Pakettikauppa\Logistics\Helper\Api;
 
 class Index extends \Magento\Framework\App\Action\Action
 {
