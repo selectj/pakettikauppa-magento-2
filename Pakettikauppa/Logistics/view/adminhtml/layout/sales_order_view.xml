@@ -5,7 +5,7 @@
         <action method="setTemplate">
           <argument name='template' xsi:type='string'>Pakettikauppa_Logistics::order/view/info.phtml</argument>
         </action>
-        <block type="core/template" class="Pakettikauppa\Logistics\Block\Adminhtml\Order\View\OrderDetailsView" name="sales_order_view_custom" template="order/view/pakettikauppa_order_details.phtml"/>
+        <block class="Pakettikauppa\Logistics\Block\Adminhtml\Order\View\OrderDetailsView" name="sales_order_view_custom" template="order/view/pakettikauppa_order_details.phtml"/>
       </referenceBlock>
       <referenceBlock name='order_shipping_view'>
         <action method="setTemplate">
