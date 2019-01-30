@@ -5,90 +5,96 @@ use Magento\Checkout\Model\Cart;
 
 class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {
-
     public function __construct(
         Cart $cart
     ) {
         $this->cart = $cart;
     }
 
-    public function getCarrierCode($carrier,$name){
-      $carrier = preg_replace('/[^\00-\255]+/u', '',strtolower(preg_replace('/\s+/', '', $carrier)));
-      $name = preg_replace('/[^\00-\255]+/u', '',strtolower(preg_replace('/\s+/', '', $name)));
-      $code = $carrier.'_'.$name;
-      if($code == 'posti_palautus'){
-        return false;
-      }else{
-        return $code;
-      }
-    }
-
-    public function getZip(){
-      $zip_pickup = $this->cart->getQuote()->getData('pickuppoint_zip');
-      $zip_shipping = $this->cart->getQuote()->getShippingAddress()->getPostcode();
-       if($zip_pickup){
-         return $zip_pickup;
-      }elseif($zip_shipping){
-        return $zip_shipping;
-      }else{
-        return false;
-      }
-    }
-    public function getPickupPointServiceCode($data, $provider){
-      $result = 0;
-      foreach($data as $d){
-        if($d->service_provider == $provider){
-          if(count($d->additional_services)>0){
-           foreach($d->additional_services as $service){
-              if($service->service_code == '2106'){
-                $result = $d->shipping_method_code;
-                break;
-              }
-           }
-          }
+    public function getCarrierCode($carrier, $name)
+    {
+        $carrier = preg_replace('/[^\00-\255]+/u', '', strtolower(preg_replace('/\s+/', '', $carrier)));
+        $name = preg_replace('/[^\00-\255]+/u', '', strtolower(preg_replace('/\s+/', '', $name)));
+        $code = $carrier . '_' . $name;
+        if ($code == 'posti_palautus') {
+            return false;
+        } else {
+            return $code;
         }
-      }
-      return $result;
     }
 
-    public function getMethod($code){
-      if(strpos($code, 'pktkp_pickuppoint') !== false) {
-        return 'pktkp_pickuppoint';
-      }
-      if(strpos($code, 'pktkp_homedelivery') !== false) {
-        return 'pktkp_homedelivery';
-      }
-    }
-
-    public function isPakettikauppa($code){
-      if(strpos($code, 'pktkp_pickuppoint') !== false || strpos($code, 'pktkp_homedelivery') !== false) {
-        return true;
-      }else{
-        return false;
-      }
-    }
-
-    public function getCurrentCarrierTitle($code){
-      $methods = $this->cart->getQuote()->getShippingAddress()->getShippingRatesCollection()->getData();
-      foreach($methods as $method){
-        if($method['code'] == $code){
-          if($method['carrier'] == 'pktkp_homedelivery'){
-            $title = $method['method_title'];
-          }
-          if($method['carrier'] == 'pktkp_pickuppoint'){
-            $title =  $method['method_title'];
-          }
+    public function getZip()
+    {
+        $zip_pickup = $this->cart->getQuote()->getData('pickuppoint_zip');
+        $zip_shipping = $this->cart->getQuote()->getShippingAddress()->getPostcode();
+        if ($zip_pickup) {
+            return $zip_pickup;
+        } elseif ($zip_shipping) {
+            return $zip_shipping;
+        } else {
+            return false;
         }
-      }
-      if(isset($title)){
-        return $title;
-      }else{
-        return 'Unknown';
-      }
+    }
+    public function getPickupPointServiceCode($data, $provider)
+    {
+        $result = 0;
+        foreach ($data as $d) {
+            if ($d->service_provider == $provider) {
+                if (count($d->additional_services)>0) {
+                    foreach ($d->additional_services as $service) {
+                        if ($service->service_code == '2106') {
+                            $result = $d->shipping_method_code;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return $result;
     }
 
-    public function getShipmentStatusText($code){
-      switch ($code) {
+    public function getMethod($code)
+    {
+        if (strpos($code, 'pktkppickuppoint') !== false) {
+            return 'pktkppickuppoint';
+        }
+        if (strpos($code, 'pktkphomedelivery') !== false) {
+            return 'pktkphomedelivery';
+        }
+    }
+
+    public function isPakettikauppa($code)
+    {
+        if (strpos($code, 'pktkppickuppoint') !== false || strpos($code, 'pktkphomedelivery') !== false) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function getCurrentCarrierTitle($code)
+    {
+        $methods = $this->cart->getQuote()->getShippingAddress()->getShippingRatesCollection()->getData();
+        foreach ($methods as $method) {
+            if ($method['code'] == $code) {
+                if ($method['carrier'] == 'pktkphomedelivery') {
+                    $title = $method['method_title'];
+                }
+                if ($method['carrier'] == 'pktkppickuppoint') {
+                    $title =  $method['method_title'];
+                }
+            }
+        }
+        if (isset($title)) {
+            return $title;
+        } else {
+            return 'Unknown';
+        }
+    }
+
+    public function getShipmentStatusText($code)
+    {
+        switch ($code) {
           case "13":
               $status = "Item is collected from sender - picked up";
               break;
@@ -131,12 +137,13 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
           default:
               $status = "Unknown";
       }
-      return $status;
+        return $status;
     }
 
-    public function getTrackingUrl($order){
-      $track_data = $order->getTracksCollection()->getData();
-      $track_number = $track_data[0]['track_number'];
-      return '/pub/labels/'.$track_number.'.pdf';
+    public function getTrackingUrl($order)
+    {
+        $track_data = $order->getTracksCollection()->getData();
+        $track_number = $track_data[0]['track_number'];
+        return '/pub/labels/' . $track_number . '.pdf';
     }
 }

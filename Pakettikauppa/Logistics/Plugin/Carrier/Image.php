@@ -46,7 +46,7 @@ class Image
     {
 
         // MATCH METHOD AND IMAGE
-        $images = $this->registry->registry('pktkp_icons');
+        $images = $this->registry->registry('pktkpicons');
         $method = $result->getCarrierTitle();
         if(isset($images[$method])){
           $url = $images[$method];

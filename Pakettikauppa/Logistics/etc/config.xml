@@ -2,7 +2,7 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
     <default>
         <carriers>
-            <pktkp_pickuppoint>
+            <pktkppickuppoint>
                 <active>1</active>
                 <sallowspecific>0</sallowspecific>
                 <model>Pakettikauppa\Logistics\Model\Carrier\Pickuppoint</model>
@@ -11,8 +11,8 @@
                 <title>Pickuppoint</title>
                 <type>I</type>
                 <specificerrmsg>This shipping method is not available. To use this shipping method, please contact us.</specificerrmsg>
-            </pktkp_pickuppoint>
-            <pktkp_homedelivery>
+            </pktkppickuppoint>
+            <pktkphomedelivery>
                 <active>1</active>
                 <sallowspecific>0</sallowspecific>
                 <model>Pakettikauppa\Logistics\Model\Carrier\Homedelivery</model>
@@ -21,7 +21,7 @@
                 <title>Home Delivery</title>
                 <type>I</type>
                 <specificerrmsg>This shipping method is not available. To use this shipping method, please contact us.</specificerrmsg>
-            </pktkp_homedelivery>
+            </pktkphomedelivery>
         </carriers>
     </default>
 </config>

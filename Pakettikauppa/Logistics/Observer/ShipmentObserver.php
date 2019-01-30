@@ -1,14 +1,13 @@
 <?php
 namespace Pakettikauppa\Logistics\Observer;
 
-use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
+use Magento\Framework\Event\ObserverInterface;
 use Magento\Sales\Api\Data\OrderInterface;
+use Magento\Sales\Model\Order\Shipment\TrackFactory;
 use Pakettikauppa\Logistics\Helper\Api;
 use Pakettikauppa\Logistics\Helper\Data;
-use Magento\Sales\Model\Order\Shipment\TrackFactory;
 use Psr\Log\LoggerInterface;
-
 
 class ShipmentObserver implements ObserverInterface
 {
@@ -32,36 +31,39 @@ class ShipmentObserver implements ObserverInterface
         $this->apiHelper = $apiHelper;
         $this->dataHelper = $dataHelper;
         $this->trackFactory = $trackFactory;
+
+        error_log("SHipment observer");
     }
     public function execute(Observer $observer)
     {
-        try{
-          $shipment = $observer->getEvent()->getShipment();
-          $shipping_method = $shipment->getOrder()->getData('shipping_method');
-          if($this->dataHelper->isPakettikauppa($shipping_method)){
-            if(count($shipment->getAllTracks())==0){
-              $code = $this->dataHelper->getMethod($shipping_method);
-              if($code=='pktkp_homedelivery'){
-                $carrier = $shipment->getOrder()->getData('home_delivery_service_provider');
-              }
-              if($code=='pktkp_pickuppoint'){
-                $carrier = $shipment->getOrder()->getData('pickup_point_provider');
-              }
-              $orderId = $shipment->getOrder()->getID();
-              $order = $this->_order->load($orderId);
-              $tracking_number = $this->apiHelper->createShipment($order);
-              $name = $this->dataHelper->getCurrentCarrierTitle($shipping_method);
+        try {
+            $shipment = $observer->getEvent()->getShipment();
+            $shipping_method = $shipment->getOrder()->getData('shipping_method');
+            error_log("Shipment method = " . $shipping_method);
+            if ($this->dataHelper->isPakettikauppa($shipping_method)) {
+                if (count($shipment->getAllTracks())==0) {
+                    $code = $this->dataHelper->getMethod($shipping_method);
+                    if ($code=='pktkphomedelivery') {
+                        $carrier = $shipment->getOrder()->getData('home_delivery_service_provider');
+                    }
+                    if ($code=='pktkppickuppoint') {
+                        $carrier = $shipment->getOrder()->getData('pickup_point_provider');
+                    }
+                    $orderId = $shipment->getOrder()->getID();
+                    $order = $this->_order->load($orderId);
+                    $tracking_number = $this->apiHelper->createShipment($order);
+                    $name = $this->dataHelper->getCurrentCarrierTitle($shipping_method);
 
-              $data = array(
+                    $data = [
                   'carrier_code' => $code,
                   'title' => $name,
                   'number' => $tracking_number
-              );
-              $track = $this->trackFactory->create()->addData($data);
-              $shipment->addTrack($track);
+              ];
+                    $track = $this->trackFactory->create()->addData($data);
+                    $shipment->addTrack($track);
+                }
             }
-          }
-        }catch(Exception $e){
+        } catch (Exception $e) {
             $this->logger->critical($e->getMessage());
         }
     }

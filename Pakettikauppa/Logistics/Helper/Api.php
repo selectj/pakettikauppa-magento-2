@@ -3,26 +3,25 @@
 namespace Pakettikauppa\Logistics\Helper;
 
 // require_once(__DIR__ . '/pakettikauppa/autoload.php');
-require_once(__DIR__ . '/pakettikauppa/Shipment.php');
-require_once(__DIR__ . '/pakettikauppa/Shipment/Sender.php');
-require_once(__DIR__ . '/pakettikauppa/Shipment/Receiver.php');
-require_once(__DIR__ . '/pakettikauppa/Shipment/AdditionalService.php');
-require_once(__DIR__ . '/pakettikauppa/Shipment/Info.php');
-require_once(__DIR__ . '/pakettikauppa/Shipment/Parcel.php');
-require_once(__DIR__ . '/pakettikauppa/Client.php');
-require_once(__DIR__ . '/pakettikauppa/SimpleXMLElement.php');
+require_once __DIR__ . '/pakettikauppa/Shipment.php';
+require_once __DIR__ . '/pakettikauppa/Shipment/Sender.php';
+require_once __DIR__ . '/pakettikauppa/Shipment/Receiver.php';
+require_once __DIR__ . '/pakettikauppa/Shipment/AdditionalService.php';
+require_once __DIR__ . '/pakettikauppa/Shipment/Info.php';
+require_once __DIR__ . '/pakettikauppa/Shipment/Parcel.php';
+require_once __DIR__ . '/pakettikauppa/Client.php';
+require_once __DIR__ . '/pakettikauppa/SimpleXMLElement.php';
 
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\App\Filesystem\DirectoryList;
+use Pakettikauppa\Client;
 use Pakettikauppa\Shipment;
-use Pakettikauppa\Shipment\Sender;
-use Pakettikauppa\Shipment\Receiver;
 use Pakettikauppa\Shipment\AdditionalService;
 use Pakettikauppa\Shipment\Info;
 use Pakettikauppa\Shipment\Parcel;
-use Pakettikauppa\Client;
-use Magento\Framework\App\Filesystem\DirectoryList;
-use Magento\Framework\App\Config\ScopeConfigInterface;
+use Pakettikauppa\Shipment\Receiver;
+use Pakettikauppa\Shipment\Sender;
 use Psr\Log\LoggerInterface;
-
 
 class Api extends \Magento\Framework\App\Helper\AbstractHelper
 {
@@ -34,17 +33,16 @@ class Api extends \Magento\Framework\App\Helper\AbstractHelper
     protected $pickup_methods;
     private $logger;
 
-    function __construct(
+    public function __construct(
         LoggerInterface $logger,
         DirectoryList $directory_list,
         ScopeConfigInterface $scopeConfig
-    )
-    {
-        $this->pickup_methods = array(
-            array('id' => 'posti', 'name' => 'Posti'),
-            array('id' => 'matkahuolto', 'name' => 'Matkahuolto'),
-            array('id' => 'dbschenker', 'name' => 'DB Schenker')
-        );
+    ) {
+        $this->pickup_methods = [
+            ['id' => 'posti', 'name' => 'Posti'],
+            ['id' => 'matkahuolto', 'name' => 'Matkahuolto'],
+            ['id' => 'dbschenker', 'name' => 'DB Schenker']
+        ];
         $this->logger = $logger;
         $this->directory_list = $directory_list;
         $this->scopeConfig = $scopeConfig;
@@ -55,7 +53,7 @@ class Api extends \Magento\Framework\App\Helper\AbstractHelper
             $this->development = false;
         }
         if ($this->development) {
-            $this->client = new Client(array('test_mode' => true));
+            $this->client = new Client(['test_mode' => true]);
         } else {
             $this->key = $this->scopeConfig->getValue('pakettikauppa_config/api/api_key');
             $this->secret = $this->scopeConfig->getValue('pakettikauppa_config/api/api_secret_key');
@@ -71,7 +69,7 @@ class Api extends \Magento\Framework\App\Helper\AbstractHelper
 
     public function getPickuppoints($query)
     {
-        $allowed = array();
+        $allowed = [];
         foreach ($this->pickup_methods as $method) {
             if ($this->scopeConfig->getValue('carriers/' . $method['id'] . '_pickuppoint/active') == 1) {
                 $allowed[] = $method['name'];
@@ -84,6 +82,7 @@ class Api extends \Magento\Framework\App\Helper\AbstractHelper
 
     public function getHomeDelivery($all = false)
     {
+        error_log("plip4");
         $client = $this->client;
         $result = [];
         $methods = json_decode($client->listShippingMethods());

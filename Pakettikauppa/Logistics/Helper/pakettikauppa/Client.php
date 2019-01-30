@@ -8,6 +8,8 @@ class Client
     private $secret;
     private $base_uri;
     private $user_agent = 'pk-client-lib/0.2';
+    private $comment = null;
+    private $response = null;
 
     /**
      * Client constructor.
@@ -22,8 +24,7 @@ class Client
         if(isset($params['test_mode']) and $params['test_mode'] === true) {
             $this->api_key      = '00000000-0000-0000-0000-000000000000';
             $this->secret       = '1234567890ABCDEF';
-            $this->base_uri     = 'http://localhost:81';
-//            $this->base_uri     = 'https://apitest.pakettikauppa.fi';
+            $this->base_uri     = 'https://apitest.pakettikauppa.fi';
         } else {
 
             if(!isset($params['api_key']))
@@ -34,10 +35,24 @@ class Client
 
             $this->api_key      = $params['api_key'];
             $this->secret       = $params['secret'];
-            $this->base_uri     = 'https://api.pakettikauppa.fi';
+
+            if(isset($params['base_uri'])) {
+                $this->base_uri = $params['base_uri'];
+            } else {
+                $this->base_uri = 'https://api.pakettikauppa.fi';
+            }
         }
     }
 
+    /**
+     * Sets comment for the request. You can set there information for Pakettikauppa. Like
+     * "Generated from Foobar platform"
+     *
+     * @param string $comment
+     */
+    public function setComment($comment) {
+        $this->comment = $comment;
+    }
     /**
      * Posts shipment data to Pakettikauppa, if request was successful
      * sets $reference and $tracking_code params to given shipment.
@@ -54,6 +69,9 @@ class Client
         $shipment_xml->{"ROUTING"}->{"Routing.Account"}     = $this->api_key;
         $shipment_xml->{"ROUTING"}->{"Routing.Id"}          = $id;
         $shipment_xml->{"ROUTING"}->{"Routing.Key"}         = md5("{$this->api_key}{$id}{$this->secret}");
+        if($this->comment != null) {
+            $shipment_xml->{"ROUTING"}->{"Routing.Comment"} = $this->comment;
+        }
 
         $response = $this->doPost('/prinetti/create-shipment', null, $shipment_xml->asXML());
 
@@ -62,6 +80,8 @@ class Client
         if(!$response_xml) {
             throw new \Exception("Failed to load response xml");
         }
+
+        $this->response = $response_xml;
 
         if($response_xml->{'response.status'} != 0) {
             throw new \Exception("Error: {$response_xml->{'response.status'}}, {$response_xml->{'response.message'}}");
@@ -73,6 +93,14 @@ class Client
         return true;
     }
 
+    /**
+     * Returns latest response as XML
+     * 
+     * @return \SimpleXMLElement
+     */
+    public function getResponse() {
+        return $this->response;
+    }
     /**a
      * Fetches the shipping label pdf for a given Shipment and
      * saves it as base64 encoded string to $pdf parameter on the Shipment.
@@ -105,6 +133,8 @@ class Client
             throw new \Exception("Failed to load response xml");
         }
 
+        $this->response = $response_xml;
+
         if($response_xml->{'response.status'} != 0) {
             throw new \Exception("Error: {$response_xml->{'response.status'}}, {$response_xml->{'response.message'}}");
         }
@@ -114,13 +144,12 @@ class Client
         return true;
     }
 
-    /**a
-     * Fetches the shipping label pdf for a given Shipment and
-     * saves it as base64 encoded string to $pdf parameter on the Shipment.
-     * The shipment must have $tracking_code and $reference set.
+    /**
+     * Fetches the shipping labels in one pdf for a given tracking_codes and
+     * saves it as base64 encoded string inside XML.
      *
-     * @param Shipment $shipment
-     * @return bool
+     * @param array $trackingCodes
+     * @return xml
      * @throws \Exception
      */
     public function fetchShippingLabels($trackingCodes)
@@ -147,6 +176,8 @@ class Client
         if(!$response_xml) {
             throw new \Exception("Failed to load response xml");
         }
+
+        $this->response = $response_xml;
 
         if($response_xml->{'response.status'} != 0) {
             throw new \Exception("Error: {$response_xml->{'response.status'}}, {$response_xml->{'response.message'}}");

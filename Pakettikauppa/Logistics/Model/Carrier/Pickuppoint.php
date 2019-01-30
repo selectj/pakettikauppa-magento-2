@@ -1,15 +1,14 @@
 <?php
 namespace Pakettikauppa\Logistics\Model\Carrier;
+
 use Magento\Quote\Model\Quote\Address\RateRequest;
-use Magento\Shipping\Model\Rate\Result;
 
 class Pickuppoint extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
     \Magento\Shipping\Model\Carrier\CarrierInterface
 {
+    protected $_code = 'pktkppickuppoint';
 
-  protected $_code = 'pktkp_pickuppoint';
-
-  public function __construct(
+    public function __construct(
     \Psr\Log\LoggerInterface $logger,
     \Magento\Framework\Registry $registry,
     \Magento\Store\Model\StoreManagerInterface $storeManager,
@@ -23,108 +22,108 @@ class Pickuppoint extends \Magento\Shipping\Model\Carrier\AbstractCarrier implem
     \Magento\Checkout\Model\Session $session,
     array $data = []
   ) {
-    $this->session = $session;
-    $this->registry = $registry;
-    $this->storeManager = $storeManager;
-    $this->dataHelper = $dataHelper;
-    $this->apiHelper = $apiHelper;
-    $this->rateMethodFactory = $rateMethodFactory;
-    $this->rateResultFactory = $rateResultFactory;
-    $this->trackFactory = $trackFactory;
-    $this->scopeConfig = $scopeConfig;
-    parent::__construct($scopeConfig, $rateErrorFactory, $logger, $data);
-  }
+        $this->session = $session;
+        $this->registry = $registry;
+        $this->storeManager = $storeManager;
+        $this->dataHelper = $dataHelper;
+        $this->apiHelper = $apiHelper;
+        $this->rateMethodFactory = $rateMethodFactory;
+        $this->rateResultFactory = $rateResultFactory;
+        $this->trackFactory = $trackFactory;
+        $this->scopeConfig = $scopeConfig;
 
-  public function getAllowedMethods()
-  {
-      return ['pktkp_pickuppoint' => $this->getConfigData('name')];
-  }
+        parent::__construct($scopeConfig, $rateErrorFactory, $logger, $data);
+    }
 
-  public function collectRates(RateRequest $request)
-  {
-    if (!$this->getConfigFlag('active')) {
-        return false;
+    public function getAllowedMethods()
+    {
+        return ['pktkppickuppoint' => $this->getConfigData('name')];
     }
-    $result = $this->rateResultFactory->create();
-    $data = array();
-    if(null !== $this->registry->registry('pktkp_icons')){
-      $data = $this->registry->registry('pktkp_icons');
-      $this->registry->unregister('pktkp_icons');
-    }
-    $zip = $this->dataHelper->getZip();
-    if ($zip) {
-      $pickuppoints = $this->apiHelper->getPickuppoints($zip);
-      if(count($pickuppoints)>0){
-        $cart_value = 0;
-        foreach($this->session->getQuote()->getAllItems() as $item){
-          $cart_value = $cart_value + ($item->getPrice() * $item->getQty());
+
+    public function collectRates(RateRequest $request)
+    {
+        if (!$this->getConfigFlag('active')) {
+            return false;
         }
-
-        foreach ($pickuppoints as $pp) {
-
-          $carrier_code = $this->dataHelper->getCarrierCode($pp->provider,'pickuppoint');
-          if($carrier_code){
-            $enabled = $this->scopeConfig->getValue('carriers/'.$carrier_code.'/active');
-          }else{
-            $enabled = 0;
-          }
-
-          if($enabled == 1){
-            $method = $this->rateMethodFactory->create();
-            $method->setCarrier('pktkp_pickuppoint');
-            $method->setCarrierTitle($pp->provider." - ".$pp->name.": ".$pp->street_address.", ".$pp->postcode.", ".$pp->city);
-            if(property_exists($pp,'provider_logo')){
-              $data[$pp->provider." - ".$pp->name.": ".$pp->street_address.", ".$pp->postcode.", ".$pp->city] = '<img src="'.$pp->provider_logo.'" alt="'.$pp->provider.'"/>';
-            }
-            $db_price =  $this->scopeConfig->getValue('carriers/'.$carrier_code.'/price');
-            $db_title =  $this->scopeConfig->getValue('carriers/'.$carrier_code.'/title');
-            $conf_price = $this->getConfigData('price');
-            $conf_title = $this->getConfigData('title');
-            if($db_price == ''){
-              $price = $conf_price;
-            }else{
-              $price = $db_price;
-            }
-            if($db_title == ''){
-              $title = $conf_title;
-            }else{
-              $title = $db_title;
-            }
-
-            // // DISCOUNT PRICE
-            $minimum =  $this->scopeConfig->getValue('carriers/'.$carrier_code.'/cart_price');
-            $new_price =  $this->scopeConfig->getValue('carriers/'.$carrier_code.'/new_price');
-            if($cart_value && $minimum && $cart_value >= $minimum){
-              $price = $new_price;
-            }
-
-            $method->setMethod($pp->pickup_point_id);
-            $method->setMethodTitle($title);
-            $method->setPrice($price);
-
-            $method->setCost($price);
-            $result->append($method);
-          }
+        $result = $this->rateResultFactory->create();
+        $data = [];
+        if (null !== $this->registry->registry('pktkpicons')) {
+            $data = $this->registry->registry('pktkpicons');
+            $this->registry->unregister('pktkpicons');
         }
-      }
+        $zip = $this->dataHelper->getZip();
+        if ($zip) {
+            $pickuppoints = $this->apiHelper->getPickuppoints($zip);
+            if (count($pickuppoints)>0) {
+                $cart_value = 0;
+                foreach ($this->session->getQuote()->getAllItems() as $item) {
+                    $cart_value = $cart_value + ($item->getPrice() * $item->getQty());
+                }
+
+                foreach ($pickuppoints as $pp) {
+                    $carrier_code = $this->dataHelper->getCarrierCode($pp->provider, 'pickuppoint');
+                    if ($carrier_code) {
+                        $enabled = $this->scopeConfig->getValue('carriers/' . $carrier_code . '/active');
+                    } else {
+                        $enabled = 0;
+                    }
+
+                    if ($enabled == 1) {
+                        $method = $this->rateMethodFactory->create();
+                        $method->setCarrier('pktkppickuppoint');
+                        $method->setCarrierTitle($pp->provider . " - " . $pp->name . ": " . $pp->street_address . ", " . $pp->postcode . ", " . $pp->city);
+                        if (property_exists($pp, 'provider_logo')) {
+                            $data[$pp->provider . " - " . $pp->name . ": " . $pp->street_address . ", " . $pp->postcode . ", " . $pp->city] = '<img src="' . $pp->provider_logo . '" alt="' . $pp->provider . '"/>';
+                        }
+                        $db_price =  $this->scopeConfig->getValue('carriers/' . $carrier_code . '/price');
+                        $db_title =  $this->scopeConfig->getValue('carriers/' . $carrier_code . '/title');
+                        $conf_price = $this->getConfigData('price');
+                        $conf_title = $this->getConfigData('title');
+                        if ($db_price == '') {
+                            $price = $conf_price;
+                        } else {
+                            $price = $db_price;
+                        }
+                        if ($db_title == '') {
+                            $title = $conf_title;
+                        } else {
+                            $title = $db_title;
+                        }
+
+                        // // DISCOUNT PRICE
+                        $minimum =  $this->scopeConfig->getValue('carriers/' . $carrier_code . '/cart_price');
+                        $new_price =  $this->scopeConfig->getValue('carriers/' . $carrier_code . '/new_price');
+                        if ($cart_value && $minimum && $cart_value >= $minimum) {
+                            $price = $new_price;
+                        }
+
+                        $method->setMethod($pp->pickup_point_id);
+                        $method->setMethodTitle($title);
+                        $method->setPrice($price);
+
+                        $method->setCost($price);
+                        $result->append($method);
+                    }
+                }
+            }
+        }
+        $this->registry->register('pktkpicons', $data);
+        return $result;
     }
-    $this->registry->register('pktkp_icons', $data);
-    return $result;
-  }
 
-  public function isTrackingAvailable()
-  {
-      return true;
-  }
+    public function isTrackingAvailable()
+    {
+        return true;
+    }
 
-  public function getTrackingInfo($tracking)
-  {
-    $title = 'Pakettikauppa';
-    $base_url = $this->storeManager->getStore()->getBaseUrl().'logistics/tracking/';
-    $track = $this->trackFactory;
-    $track->setUrl($base_url.'?code='.$tracking)
+    public function getTrackingInfo($tracking)
+    {
+        $title = 'Pakettikauppa';
+        $base_url = $this->storeManager->getStore()->getBaseUrl() . 'logistics/tracking/';
+        $track = $this->trackFactory;
+        $track->setUrl($base_url . '?code=' . $tracking)
           ->setCarrierTitle($title)
           ->setTracking($tracking);
-    return $track;
-  }
+        return $track;
+    }
 }

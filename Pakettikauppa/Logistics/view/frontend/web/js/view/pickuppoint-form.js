@@ -13,7 +13,7 @@ define([
                 if(e.which == 13) {
                   if (jQuery('#pickuppoint-form input.input-text').is(':focus')) {
                     e.preventDefault();
-                    jQuery("#pktkp_getpickups").click();
+                    jQuery("#pktkpgetpickups").click();
                     return false;
                   }
                 }
