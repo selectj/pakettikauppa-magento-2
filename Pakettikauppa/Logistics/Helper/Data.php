@@ -140,6 +140,14 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return $status;
     }
 
+    public function getTrackingCode($order)
+    {
+        $track_data = $order->getTracksCollection()->getData();
+        $track_number = $track_data[0]['track_number'];
+
+        return $track_number;
+    }
+
     public function getTrackingUrl($order)
     {
         $track_data = $order->getTracksCollection()->getData();

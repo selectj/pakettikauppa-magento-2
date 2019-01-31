@@ -80,6 +80,9 @@ class Api extends \Magento\Framework\App\Helper\AbstractHelper
         return json_decode($result);
     }
 
+    public function getLabel($trackingCode) {
+        return $this->client->fetchShippingLabels([$trackingCode]);
+    }
     public function getHomeDelivery($all = false)
     {
         error_log("plip4");
@@ -176,11 +179,6 @@ class Api extends \Magento\Framework\App\Helper\AbstractHelper
         try {
             if ($client->createTrackingCode($shipment)) {
                 if ($client->fetchShippingLabel($shipment)) {
-                    $dir = $this->directory_list->getRoot() . "/pub/labels";
-                    if (!is_dir($dir)) {
-                        mkdir($dir);
-                    }
-                    file_put_contents($dir . '/' . $shipment->getTrackingCode() . '.pdf', base64_decode($shipment->getPdf()));
                     return (string)$shipment->getTrackingCode();
                 }
             }

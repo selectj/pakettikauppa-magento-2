@@ -21,7 +21,7 @@
           <?php ?>
             <p><a href="#" id="linkId" onclick="popWin('<?php /* @escapeNotVerified */ echo $this->helper('Magento\Shipping\Helper\Data')->getTrackingPopupUrlBySalesModel($order) ?>','trackorder','width=800,height=600,resizable=yes,scrollbars=yes')" title="<?php /* @escapeNotVerified */ echo __('Track Order') ?>"><?php /* @escapeNotVerified */ echo __('Track Order') ?></a></p>
             <?php if (strpos($order->getShippingMethod(), "pktkppickuppoint") !== false) : ?>
-              <p><a href="#" id="linkId2" onclick="popWin('<?php /* @escapeNotVerified */ echo $this->helper('Pakettikauppa\Logistics\Helper\Data')->getTrackingUrl($order) ?>','trackorder','width=800,height=600,resizable=yes,scrollbars=yes')" title="<?php /* @escapeNotVerified */ echo __('Printing Label') ?>"><?php /* @escapeNotVerified */ echo __('Printing Label') ?></a></p>
+              <p><a href="<?php /* @escapeNotVerified */ echo $this->getUrl('logistics/label/index', ['tracking_code' => $this->helper('Pakettikauppa\Logistics\Helper\Data')->getTrackingCode($order)]); ?>" title="<?php /* @escapeNotVerified */ echo __('Printing Label') ?>"><?php /* @escapeNotVerified */ echo __('Printing Label') ?></a></p>
             <?php endif; ?>
         <?php endif; ?>
         <?php if ($order->getShippingDescription()): ?>
