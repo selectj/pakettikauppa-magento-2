@@ -33,6 +33,15 @@ class Api extends \Magento\Framework\App\Helper\AbstractHelper
     protected $pickup_methods;
     private $logger;
 
+    /**
+     * Api constructor.
+     *
+     * @param LoggerInterface      $logger
+     * @param DirectoryList        $directory_list
+     * @param ScopeConfigInterface $scopeConfig
+     *
+     * @throws \Exception
+     */
     public function __construct(
         LoggerInterface $logger,
         DirectoryList $directory_list,
@@ -62,7 +71,7 @@ class Api extends \Magento\Framework\App\Helper\AbstractHelper
                 $params['secret'] = $this->secret;
                 $this->client = new Client($params);
             } else {
-                Mage::throwException('Please insert API and secret key.');
+                throw new \Exception('Please insert API and secret key.');
             }
         }
     }
