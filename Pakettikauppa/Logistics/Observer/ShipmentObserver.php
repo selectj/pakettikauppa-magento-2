@@ -31,15 +31,13 @@ class ShipmentObserver implements ObserverInterface
         $this->apiHelper = $apiHelper;
         $this->dataHelper = $dataHelper;
         $this->trackFactory = $trackFactory;
-
-        error_log("SHipment observer");
     }
     public function execute(Observer $observer)
     {
         try {
             $shipment = $observer->getEvent()->getShipment();
             $shipping_method = $shipment->getOrder()->getData('shipping_method');
-            error_log("Shipment method = " . $shipping_method);
+
             if ($this->dataHelper->isPakettikauppa($shipping_method)) {
                 if (count($shipment->getAllTracks())==0) {
                     $code = $this->dataHelper->getMethod($shipping_method);

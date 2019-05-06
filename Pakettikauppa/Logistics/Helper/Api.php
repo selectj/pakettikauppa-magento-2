@@ -94,7 +94,6 @@ class Api extends \Magento\Framework\App\Helper\AbstractHelper
     }
     public function getHomeDelivery($all = false)
     {
-        error_log("plip4");
         $client = $this->client;
         $result = [];
         $methods = json_decode($client->listShippingMethods());

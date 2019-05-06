@@ -31,12 +31,9 @@ class OrderObserver implements ObserverInterface
         $this->cart = $cart;
         $this->apiHelper = $apiHelper;
         $this->dataHelper = $dataHelper;
-
-        error_log("OrderObserver");
     }
     public function execute(Observer $observer)
     {
-        error_log("KEKKONEN!!!");
         try {
             $quote = $this->cart->getQuote();
             $order = $observer->getOrder();
