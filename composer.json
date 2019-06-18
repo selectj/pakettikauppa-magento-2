@@ -1,5 +1,5 @@
 {
-    "name": "pakettikauppa/api-library",
+    "name": "pakettikauppa/pakettikauppa-magento-2",
     "description": "Pakettikauppa API implementation",
     "type": "library",
     "keywords": ["Pakettikauppa", "API"],
