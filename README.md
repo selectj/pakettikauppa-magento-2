@@ -1,8 +1,27 @@
 # Pakettikauppa (M2) shipping module
 ### Install instructions:
-1. Copy files into your magento installation app/code directory
-2. Activate module (but module should be activated by default)
-3. Insert your API credentials: Stores -> Configurations -> Pakettikauppa
+
+>#### Option 1: app/code
+> Copy files into your magento installation app/code directory
+>
+> #### Option 2: composer
+> Add this Git repository to composer.json
+>```
+>"repositories": {
+>    "pakettikauppa-magento-2": {
+>        "type": "vcs",
+>        "url": "https://github.com/Pakettikauppa/pakettikauppa-magento-2"
+>    }
+>}
+>```
+>
+> Execute
+>
+> ```composer require pakettikauppa/pakettikauppa-magento-2:dev-master```
+
+After option one or two,
+* Activate module (but module should be activated by default)
+* Insert your API credentials: Stores -> Configurations -> Pakettikauppa
 
 ### How to use:
 1. Add item to cart and go to checkout
