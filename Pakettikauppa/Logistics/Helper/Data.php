@@ -14,7 +14,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     public function getCarrierCode($carrier, $name)
     {
         $carrier = preg_replace('/[^\00-\255]+/u', '', strtolower(preg_replace('/\s+/', '', $carrier)));
-        $name = preg_replace('/[^\00-\255]+/u', '', strtolower(preg_replace('/\s+/', '', $name)));
+        $name = preg_replace('/[^\00-\255]+/u', '', strtolower(preg_replace('/\s+/', '', preg_replace('/\-/', '', $name))));
         $code = $carrier . '_' . $name;
         if ($code == 'posti_palautus') {
             return false;
