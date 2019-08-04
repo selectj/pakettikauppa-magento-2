@@ -63,7 +63,7 @@ class Pickuppoint extends \Magento\Shipping\Model\Carrier\AbstractCarrier implem
                 foreach ($pickuppoints as $pp) {
                     $carrier_code = $this->dataHelper->getCarrierCode($pp->provider, 'pickuppoint');
                     if ($carrier_code) {
-                        $enabled = $this->scopeConfig->getValue('carriers/' . $carrier_code . '/active');
+                        $enabled = $this->scopeConfig->getValue('carriers/' . $carrier_code . '/active', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
                     } else {
                         $enabled = 0;
                     }
@@ -75,8 +75,8 @@ class Pickuppoint extends \Magento\Shipping\Model\Carrier\AbstractCarrier implem
                         if (property_exists($pp, 'provider_logo')) {
                             $data[$pp->provider . " - " . $pp->name . ": " . $pp->street_address . ", " . $pp->postcode . ", " . $pp->city] = '<img src="' . $pp->provider_logo . '" alt="' . $pp->provider . '"/>';
                         }
-                        $db_price =  $this->scopeConfig->getValue('carriers/' . $carrier_code . '/price');
-                        $db_title =  $this->scopeConfig->getValue('carriers/' . $carrier_code . '/title');
+                        $db_price =  $this->scopeConfig->getValue('carriers/' . $carrier_code . '/price', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+                        $db_title =  $this->scopeConfig->getValue('carriers/' . $carrier_code . '/title', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
                         $conf_price = $this->getConfigData('price');
                         $conf_title = $this->getConfigData('title');
                         if ($db_price == '') {
@@ -91,8 +91,8 @@ class Pickuppoint extends \Magento\Shipping\Model\Carrier\AbstractCarrier implem
                         }
 
                         // // DISCOUNT PRICE
-                        $minimum =  $this->scopeConfig->getValue('carriers/' . $carrier_code . '/cart_price');
-                        $new_price =  $this->scopeConfig->getValue('carriers/' . $carrier_code . '/new_price');
+                        $minimum =  $this->scopeConfig->getValue('carriers/' . $carrier_code . '/cart_price', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+                        $new_price =  $this->scopeConfig->getValue('carriers/' . $carrier_code . '/new_price', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
                         if ($cart_value && $minimum && $cart_value >= $minimum) {
                             $price = $new_price;
                         }

@@ -55,7 +55,7 @@ class Api extends \Magento\Framework\App\Helper\AbstractHelper
         $this->logger = $logger;
         $this->directory_list = $directory_list;
         $this->scopeConfig = $scopeConfig;
-        $this->active = $this->scopeConfig->getValue('pakettikauppa_config/store/active');
+        $this->active = $this->scopeConfig->getValue('pakettikauppa_config/store/active', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
         if ($this->active == 1) {
             $this->development = true;
         } else {
@@ -64,8 +64,8 @@ class Api extends \Magento\Framework\App\Helper\AbstractHelper
         if ($this->development) {
             $this->client = new Client(['test_mode' => true]);
         } else {
-            $this->key = $this->scopeConfig->getValue('pakettikauppa_config/api/api_key');
-            $this->secret = $this->scopeConfig->getValue('pakettikauppa_config/api/api_secret_key');
+            $this->key = $this->scopeConfig->getValue('pakettikauppa_config/api/api_key', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+            $this->secret = $this->scopeConfig->getValue('pakettikauppa_config/api/api_secret_key', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
             if (isset($this->key) && isset($this->secret)) {
                 $params['api_key'] = $this->key;
                 $params['secret'] = $this->secret;
@@ -80,7 +80,7 @@ class Api extends \Magento\Framework\App\Helper\AbstractHelper
     {
         $allowed = [];
         foreach ($this->pickup_methods as $method) {
-            if ($this->scopeConfig->getValue('carriers/' . $method['id'] . '_pickuppoint/active') == 1) {
+            if ($this->scopeConfig->getValue('carriers/' . $method['id'] . '_pickuppoint/active', \Magento\Store\Model\ScopeInterface::SCOPE_STORE) == 1) {
                 $allowed[] = $method['name'];
             }
         }
@@ -133,11 +133,11 @@ class Api extends \Magento\Framework\App\Helper\AbstractHelper
         $sender = new Sender();
         $store = $order->getStoreId();
 
-        $_sender_name = $this->scopeConfig->getValue('pakettikauppa_config/store/name');
-        $_sender_address = $this->scopeConfig->getValue('pakettikauppa_config/store/address');
-        $_sender_city = $this->scopeConfig->getValue('pakettikauppa_config/store/city');
-        $_sender_postcode = $this->scopeConfig->getValue('pakettikauppa_config/store/postcode');
-        $_sender_country = $this->scopeConfig->getValue('pakettikauppa_config/store/country');
+        $_sender_name = $this->scopeConfig->getValue('pakettikauppa_config/store/name', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $_sender_address = $this->scopeConfig->getValue('pakettikauppa_config/store/address', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $_sender_city = $this->scopeConfig->getValue('pakettikauppa_config/store/city', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $_sender_postcode = $this->scopeConfig->getValue('pakettikauppa_config/store/postcode', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $_sender_country = $this->scopeConfig->getValue('pakettikauppa_config/store/country', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
         $sender->setName1($_sender_name);
         $sender->setAddr1($_sender_address);
         $sender->setPostcode($_sender_postcode);
