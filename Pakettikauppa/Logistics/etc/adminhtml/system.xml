@@ -108,7 +108,7 @@
                     <validate>validate-number validate-zero-or-greater</validate>
                 </field>
             </group>
-            <group id="posti_express" translate="label" type="text" sortOrder="191" showInDefault="1" showInWebsite="1" showInStore="1">
+            <group id="posti_expresspaketti" translate="label" type="text" sortOrder="191" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Posti - Express</label>
                 <field id="active" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Enabled</label>
