@@ -59,7 +59,7 @@ class Homedelivery extends \Magento\Shipping\Model\Carrier\AbstractCarrier imple
             foreach ($homedelivery as $hd) {
                 $carrier_code = $this->dataHelper->getCarrierCode($hd->service_provider, $hd->name);
                 if ($carrier_code) {
-                    $enabled = $this->scopeConfig->getValue('carriers/' . $carrier_code . '/active');
+                    $enabled = $this->scopeConfig->getValue('carriers/' . $carrier_code . '/active', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
                 } else {
                     $enabled = 0;
                 }
@@ -71,8 +71,8 @@ class Homedelivery extends \Magento\Shipping\Model\Carrier\AbstractCarrier imple
                     if (property_exists($hd, 'icon')) {
                         $data[$hd->service_provider] = '<img src="' . $hd->icon . '" alt="' . $hd->service_provider . '"/>';
                     }
-                    $db_price =  $this->scopeConfig->getValue('carriers/' . $carrier_code . '/price');
-                    $db_title =  $this->scopeConfig->getValue('carriers/' . $carrier_code . '/title');
+                    $db_price =  $this->scopeConfig->getValue('carriers/' . $carrier_code . '/price', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+                    $db_title =  $this->scopeConfig->getValue('carriers/' . $carrier_code . '/title', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
                     $conf_price = $this->getConfigData('price');
                     $conf_title = $this->getConfigData('title');
                     if ($db_price == '') {
@@ -87,8 +87,8 @@ class Homedelivery extends \Magento\Shipping\Model\Carrier\AbstractCarrier imple
                     }
 
                     // DISCOUNT PRICE
-                    $minimum =  $this->scopeConfig->getValue('carriers/' . $carrier_code . '/cart_price');
-                    $new_price =  $this->scopeConfig->getValue('carriers/' . $carrier_code . '/new_price');
+                    $minimum =  $this->scopeConfig->getValue('carriers/' . $carrier_code . '/cart_price', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+                    $new_price =  $this->scopeConfig->getValue('carriers/' . $carrier_code . '/new_price', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
                     if ($cart_value && $minimum && $cart_value >= $minimum) {
                         $price = $new_price;
                     }
