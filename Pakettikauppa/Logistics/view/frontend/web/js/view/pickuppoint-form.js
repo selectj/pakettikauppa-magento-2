@@ -18,6 +18,22 @@ define([
                   }
                 }
             });
+            // When modifying shipping form postcode, automatically copy it to
+            // pickuppoint-zip for user-friendliness
+            jQuery(document).on('change', function(e) {
+                var pickupZip = jQuery('#pickuppoint-form input[name="pickuppoint-zip"]');
+                if (e.target.id === pickupZip.attr('id')) {
+                    return false;
+                }
+                var postcode = jQuery('input[name="postcode"]').val();
+                if(postcode.length>0
+                   && jQuery('input[name="pickuppoint-zip"]').val().length == 0
+                   && !jQuery('#pickuppoint-form input.input-text').is(':focus'))
+                {
+                    pickupZip.val(postcode).change();
+                    jQuery("#pktkpgetpickups").click();
+                }
+            });
             // component initialization logic
             return this;
         },
