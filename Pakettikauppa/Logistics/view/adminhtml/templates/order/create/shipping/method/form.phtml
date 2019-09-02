@@ -33,6 +33,7 @@
                                                                  class="admin__control-radio required-entry"/>
                             <label class="admin__field-label" for="s_method_<?= /* @escapeNotVerified */ $_code ?>">
                                 <?= $block->escapeHtml($_rate->getMethodTitle() ? $_rate->getMethodTitle() : $_rate->getMethodDescription()) ?> -
+                                <?= $block->escapeHtml($_rate->getCarrierTitle()) ?> -
                                 <strong>
                                     <?php $_excl = $block->getShippingPrice($_rate->getPrice(), $this->helper('Magento\Tax\Helper\Data')->displayShippingPriceIncludingTax()); ?>
                                     <?php $_incl = $block->getShippingPrice($_rate->getPrice(), true); ?>
@@ -59,6 +60,7 @@
                 </dt>
                 <dd class="admin__order-shipment-methods-options">
                     <?= $block->escapeHtml($_rate->getMethodTitle() ? $_rate->getMethodTitle() : $_rate->getMethodDescription()) ?> -
+                    <?= $block->escapeHtml($_rate->getCarrierTitle()) ?> -
                     <strong>
                         <?php $_excl = $block->getShippingPrice($_rate->getPrice(), $this->helper('Magento\Tax\Helper\Data')->displayShippingPriceIncludingTax()); ?>
                         <?php $_incl = $block->getShippingPrice($_rate->getPrice(), true); ?>
