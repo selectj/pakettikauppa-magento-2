@@ -6,9 +6,11 @@ use Magento\Checkout\Model\Cart;
 class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {
     public function __construct(
-        Cart $cart
+        Cart $cart,
+        \Magento\Backend\Model\Session\Quote $backendQuoteSession
     ) {
         $this->cart = $cart;
+        $this->backendQuoteSession = $backendQuoteSession;
     }
 
     public function getCarrierCode($carrier, $name)
@@ -27,10 +29,14 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     {
         $zip_pickup = $this->cart->getQuote()->getData('pickuppoint_zip');
         $zip_shipping = $this->cart->getQuote()->getShippingAddress()->getPostcode();
+        $zip_backend = $this->backendQuoteSession->getQuote()->getShippingAddress()->getPostcode();
+
         if ($zip_pickup) {
             return $zip_pickup;
         } elseif ($zip_shipping) {
             return $zip_shipping;
+        } elseif ($zip_backend) {
+            return $zip_backend;
         } else {
             return false;
         }
