@@ -27,19 +27,16 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
     public function getZip()
     {
-        $zip_pickup = $this->cart->getQuote()->getData('pickuppoint_zip');
-        $zip_shipping = $this->cart->getQuote()->getShippingAddress()->getPostcode();
-        $zip_backend = $this->backendQuoteSession->getQuote()->getShippingAddress()->getPostcode();
+        $zip = false;
 
-        if ($zip_pickup) {
-            return $zip_pickup;
-        } elseif ($zip_shipping) {
-            return $zip_shipping;
-        } elseif ($zip_backend) {
-            return $zip_backend;
-        } else {
-            return false;
+        if ($zip = $this->cart->getQuote()->getData('pickuppoint_zip')) {
+            return $zip;
+        } elseif ($zip = $this->cart->getQuote()->getShippingAddress()->getPostcode()) {
+            return $zip;
+        } elseif ($zip = $this->backendQuoteSession->getQuote()->getShippingAddress()->getPostcode()) {
+            return $zip;
         }
+        return $zip;
     }
     public function getPickupPointServiceCode($data, $provider)
     {
