@@ -23,12 +23,14 @@ class OrderObserver implements ObserverInterface
         OrderInterface $order,
         LoggerInterface $logger,
         Cart $cart,
+        \Magento\Backend\Model\Session\Quote $backendQuoteSession,
         Api $apiHelper,
         Data $dataHelper
     ) {
         $this->_order = $order;
         $this->logger = $logger;
         $this->cart = $cart;
+        $this->backendQuoteSession = $backendQuoteSession;
         $this->apiHelper = $apiHelper;
         $this->dataHelper = $dataHelper;
     }
@@ -38,6 +40,11 @@ class OrderObserver implements ObserverInterface
             $quote = $this->cart->getQuote();
             $order = $observer->getOrder();
             $shipping_method_code = $quote->getShippingAddress()->getShippingMethod();
+
+            if (!$shipping_method_code) {
+                // For orders created via admin area
+                $shipping_method_code = $this->backendQuoteSession->getQuote()->getShippingAddress()->getShippingMethod();
+            }
 
             if ($this->dataHelper->isPakettikauppa($shipping_method_code)) {
                 $method = $this->dataHelper->getMethod($shipping_method_code);
