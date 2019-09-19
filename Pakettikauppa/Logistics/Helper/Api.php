@@ -192,6 +192,9 @@ class Api extends \Magento\Framework\App\Helper\AbstractHelper
             }
         } catch (\Exception $ex) {
             $this->logger->critical('Shipment not created, please double check your store settings on STORE view level. Additional message: ' . $ex->getMessage());
+            throw new \Magento\Framework\Exception\LocalizedException(
+                __($ex->getMessage())
+            );
         }
     }
 
