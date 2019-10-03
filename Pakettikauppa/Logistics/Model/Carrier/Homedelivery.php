@@ -64,6 +64,10 @@ class Homedelivery extends \Magento\Shipping\Model\Carrier\AbstractCarrier imple
                     $enabled = 0;
                 }
                 if ($enabled == 1) {
+                    // Check if this shipping method supports the country
+                    if (!in_array($this->dataHelper->getCountry(), $hd->supported_countries, true)) {
+                        continue;
+                    }
                     $method = $this->rateMethodFactory->create();
                     $method->setCarrier('pktkphomedelivery');
                     $method->setCarrierTitle($hd->service_provider);
