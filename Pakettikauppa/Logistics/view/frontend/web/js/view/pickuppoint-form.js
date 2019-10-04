@@ -20,7 +20,7 @@ define([
             });
             // When modifying shipping form postcode, automatically copy it to
             // pickuppoint-zip for user-friendliness
-            jQuery(document).on('change', function(e) {
+            jQuery('input[name="postcode"]').on('change', function(e) {
                 var pickupZip = jQuery('#pickuppoint-form input[name="pickuppoint-zip"]');
                 if (e.target.id === pickupZip.attr('id')) {
                     return false;

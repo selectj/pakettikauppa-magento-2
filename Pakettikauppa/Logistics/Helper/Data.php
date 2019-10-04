@@ -38,6 +38,18 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         }
         return $zip;
     }
+
+    public function getCountry() {
+        $country = false;
+
+        if ($country = $this->cart->getQuote()->getShippingAddress()->getCountryId()) {
+            return $country;
+        } elseif ($country = $this->backendQuoteSession->getQuote()->getShippingAddress()->getCountryId()) {
+            return $country;
+        }
+        return $country;
+    }
+
     public function getPickupPointServiceCode($data, $provider)
     {
         $result = 0;
