@@ -151,8 +151,17 @@ class Api extends \Magento\Framework\App\Helper\AbstractHelper
         $lastname = $shipping_data->getData('lastname');
         $name = $firstname . ' ' . $middlename . ' ' . $lastname;
 
+        $company = $shipping_data->getData('company');
+
         $receiver = new Receiver();
-        $receiver->setName1($name);
+        // if company exists, then use company name as name1 field
+        if (!empty($company)) {
+            $receiver->setName1($company);
+            $receiver->setName2($name);
+        } else {
+            $receiver->setName1($name);
+        }
+
         $receiver->setAddr1($shipping_data->getData('street'));
         $receiver->setPostcode($shipping_data->getData('postcode'));
         $receiver->setCity($shipping_data->getData('city'));
