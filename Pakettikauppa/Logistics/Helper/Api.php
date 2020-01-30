@@ -98,34 +98,34 @@ class Api extends \Magento\Framework\App\Helper\AbstractHelper
         $result = [];
         $methods = json_decode($client->listShippingMethods());
 
-        if (count($methods) > 0) {
-            if ($all == true) {
-                return $methods;
-            } else {
-                $counter = 0;
-                foreach ($methods as $method) {
-                    if (count($method->additional_services) > 0) {
-                        foreach ($method->additional_services as $service) {
-                            if ($service->service_code == '2106') {
-                                $method->name = null;
-                                $method->shipping_method_code = null;
-                                $method->description = null;
-                                $method->service_provider = null;
-                                $method->additional_services = null;
-                            }
-                        }
-                    }
-                }
-                foreach ($methods as $method) {
-                    if ($method->name != null) {
-                        $result[] = $method;
-                    }
-                }
-                return $result;
-            }
-        } else {
+        if (empty($methods)) {
             return $result;
         }
+
+        if ($all === true) {
+            return $methods;
+        }
+
+        $counter = 0;
+        foreach ($methods as $method) {
+            if (count($method->additional_services) > 0) {
+                foreach ($method->additional_services as $service) {
+                    if ($service->service_code == '2106') {
+                        $method->name = null;
+                        $method->shipping_method_code = null;
+                        $method->description = null;
+                        $method->service_provider = null;
+                        $method->additional_services = null;
+                    }
+                }
+            }
+        }
+        foreach ($methods as $method) {
+            if ($method->name != null) {
+                $result[] = $method;
+            }
+        }
+        return $result;
     }
 
     public function createShipment($order)
