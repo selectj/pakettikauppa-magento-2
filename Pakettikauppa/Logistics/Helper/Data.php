@@ -52,6 +52,17 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
     public function getPickupPointServiceCode($data, $provider)
     {
+        switch($provider) {
+            case 'Posti':
+                return 2103;
+            case 'Matkahuolto':
+                return 90080;
+            case 'DB Schenker':
+                return 80010;
+            default:
+                return 0;
+        }
+        /*
         $result = 0;
         foreach ($data as $d) {
             if ($d->service_provider == $provider) {
@@ -66,6 +77,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             }
         }
         return $result;
+        */
     }
 
     public function getMethod($code)
