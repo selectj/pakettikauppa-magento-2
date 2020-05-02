@@ -55,10 +55,7 @@ class Pickuppoint extends \Magento\Shipping\Model\Carrier\AbstractCarrier implem
         if ($zip) {
             $pickuppoints = $this->apiHelper->getPickuppoints($zip);
             if (!empty($pickuppoints) && count($pickuppoints) > 0) {
-                $cart_value = 0;
-                foreach ($this->session->getQuote()->getAllItems() as $item) {
-                    $cart_value = $cart_value + ($item->getPrice() * $item->getQty());
-                }
+                $cart_value = $request->getPackageValueWithDiscount();
 
                 foreach ($pickuppoints as $pp) {
                     $carrier_code = $this->dataHelper->getCarrierCode($pp->provider, 'pickuppoint');
