@@ -10,7 +10,7 @@ class SimpleXMLElement extends \SimpleXMLElement
    * @param string
    * @param string
    */
-  public function addChild($key, $value = null, $namespace = null)
+  public function addChild($key, $value = null, $namespace = null): ?SimpleXMLElement
   {
     if ( $value != null )
     {
