@@ -106,22 +106,8 @@ class Api extends \Magento\Framework\App\Helper\AbstractHelper
             return $methods;
         }
 
-        $counter = 0;
         foreach ($methods as $method) {
-            if (count($method->additional_services) > 0) {
-                foreach ($method->additional_services as $service) {
-                    if ($service->service_code == '2106') {
-                        $method->name = null;
-                        $method->shipping_method_code = null;
-                        $method->description = null;
-                        $method->service_provider = null;
-                        $method->additional_services = null;
-                    }
-                }
-            }
-        }
-        foreach ($methods as $method) {
-            if ($method->name != null) {
+            if ($method->name != null && $method->home_delivery == true) {
                 $result[] = $method;
             }
         }
