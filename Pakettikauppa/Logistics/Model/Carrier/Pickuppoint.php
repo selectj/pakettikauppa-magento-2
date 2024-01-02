@@ -6,6 +6,10 @@ use Magento\Quote\Model\Quote\Address\RateRequest;
 class Pickuppoint extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
     \Magento\Shipping\Model\Carrier\CarrierInterface
 {
+    /** @var int Rate limit for sending requests to Pakettikauppa API (in seconds) */
+    const API_RATE_LIMIT_SECONDS = 2;
+    const API_RATE_LIMIT_CACHE_KEY = 'pkt_rate_limiter';
+
     protected $_code = 'pktkppickuppoint';
 
     public function __construct(
@@ -52,9 +56,18 @@ class Pickuppoint extends \Magento\Shipping\Model\Carrier\AbstractCarrier implem
             $this->registry->unregister('pktkpicons');
         }
         $zip = $this->dataHelper->getZip();
-        if ($zip) {
+        $hasValidPickupPoints = false;
+        if ($this->dataHelper->validateZip($zip) && $zip) {
+            if (!empty($this->session->getData(static::API_RATE_LIMIT_CACHE_KEY))) {
+                $elapsedTime = microtime(true) - $this->session->getData(static::API_RATE_LIMIT_CACHE_KEY);
+                if ($elapsedTime < static::API_RATE_LIMIT_SECONDS) {
+                    usleep((int)(static::API_RATE_LIMIT_SECONDS - $elapsedTime) * 1000000);
+                }
+            }
+            $this->session->setData(static::API_RATE_LIMIT_CACHE_KEY, microtime(true));
             $pickuppoints = $this->apiHelper->getPickuppoints($zip);
             if (!empty($pickuppoints) && count($pickuppoints) > 0) {
+                $hasValidPickupPoints = true;
                 $cart_value = $request->getPackageValueWithDiscount();
 
                 foreach ($pickuppoints as $pp) {
@@ -69,9 +82,8 @@ class Pickuppoint extends \Magento\Shipping\Model\Carrier\AbstractCarrier implem
                         $method = $this->rateMethodFactory->create();
                         $method->setCarrier('pktkppickuppoint');
                         $method->setCarrierTitle($pp->provider . " - " . $pp->name . ": " . $pp->street_address . ", " . $pp->postcode . ", " . $pp->city);
-                        if (property_exists($pp, 'provider_logo')) {
-                            $data[$pp->provider . " - " . $pp->name . ": " . $pp->street_address . ", " . $pp->postcode . ", " . $pp->city] = '<img src="' . $pp->provider_logo . '" alt="' . $pp->provider . '"/>';
-                        }
+                        $data[$pp->pickup_point_id]['description']  = $pp->description;
+                        $data[$pp->pickup_point_id]['distance'] = (float)$pp->distance >= 1000 ? number_format((float)$pp->distance / 1000, 1) . ' km' : $pp->distance . ' m';
                         $db_price =  $this->scopeConfig->getValue('carriers/' . $carrier_code . '/price', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
                         $db_title =  $this->scopeConfig->getValue('carriers/' . $carrier_code . '/title', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
                         $conf_price = $this->getConfigData('price');
@@ -104,7 +116,21 @@ class Pickuppoint extends \Magento\Shipping\Model\Carrier\AbstractCarrier implem
                 }
             }
         }
+
+        if (!$hasValidPickupPoints) {
+            // When there are no pickup points available, add a method with a custom attribute
+            $method = $this->rateMethodFactory->create();
+            $method->setCarrier('pktkppickuppoint');
+            $method->setCarrierTitle('Tarkista postinumero - Emme löytäneet noutopisteitä');
+            $method->setMethod('no_pickuppoints');
+            $method->setMethodTitle('Posti Noutopiste - TARKISTA POSTINUMERO');
+            $method->setPrice(4.99);
+            $method->setCost(0);
+            $result->append($method);
+        }
+
         $this->registry->register('pktkpicons', $data);
+
         return $result;
     }
 

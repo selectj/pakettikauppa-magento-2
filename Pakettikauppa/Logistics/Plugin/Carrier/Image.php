@@ -47,22 +47,18 @@ class Image
 
         // MATCH METHOD AND IMAGE
         $images = $this->registry->registry('pktkpicons');
-        $method = $result->getCarrierTitle();
-        if(isset($images[$method])){
-          $url = $images[$method];
-        }else{
-          $url = '';
-        }
+        $method = $result->getMethodCode();
 
         // CREATE EXTENSION ATTRIBUTE
-        if($result->getExtensionAttributes()){
+        if ($result->getExtensionAttributes()){
           $extensibleAttribute = $result->getExtensionAttributes();
-        }else{
+        } else{
           $extensibleAttribute = $this->extensionFactory->create();
         }
 
+        $extensibleAttribute->setPostidistance($images[$method]['distance'] ?? '');
+        $extensibleAttribute->setPostidescription($images[$method]['description'] ?? '');
         // ATTACHE EXTENSION ATTIBUTE {image}
-        $extensibleAttribute->setImage($url);
         $result->setExtensionAttributes($extensibleAttribute);
         return $result;
     }

@@ -5,6 +5,8 @@ use Magento\Checkout\Model\Cart;
 
 class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {
+    const ZIP_MIN_LENGTH = 5;
+
     public function __construct(
         Cart $cart,
         \Magento\Backend\Model\Session\Quote $backendQuoteSession
@@ -37,6 +39,11 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             return $zip;
         }
         return $zip;
+    }
+
+    public function validateZip($zip): bool
+    {
+        return is_string($zip) && strlen($zip) >= static::ZIP_MIN_LENGTH;
     }
 
     public function getCountry() {
@@ -82,6 +89,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
     public function getMethod($code)
     {
+        if (empty($code)) return '';
         if (strpos($code, 'pktkppickuppoint') !== false) {
             return 'pktkppickuppoint';
         }
@@ -92,7 +100,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
     public function isPakettikauppa($code)
     {
-        if (strpos($code, 'pktkppickuppoint') !== false || strpos($code, 'pktkphomedelivery') !== false) {
+        if (!empty($code) && (strpos($code, 'pktkppickuppoint') !== false || strpos($code, 'pktkphomedelivery') !== false)) {
             return true;
         } else {
             return false;
