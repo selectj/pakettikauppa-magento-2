@@ -40,7 +40,9 @@ class OrderObserver implements ObserverInterface
             $quote = $this->cart->getQuote();
             $order = $observer->getOrder();
             $shipping_method_code = $quote->getShippingAddress()->getShippingMethod();
-
+            if (!$shipping_method_code) {
+                $shipping_method_code = $order->getShippingMethod();
+            }
             if (!$shipping_method_code) {
                 // For orders created via admin area
                 $shipping_method_code = $this->backendQuoteSession->getQuote()->getShippingAddress()->getShippingMethod();
@@ -52,7 +54,7 @@ class OrderObserver implements ObserverInterface
                 $method_available = false;
 
                 if ($method == 'pktkppickuppoint') {
-                    $zip = $this->dataHelper->getZip();
+                    $zip = $this->dataHelper->getZip() ?: $order->getShippingAddress()->getPostcode();
                     $pickup_methods = $this->apiHelper->getPickuppoints($zip);
                     $pickuppoint_zip = $quote->getData('pickuppoint_zip');
 
