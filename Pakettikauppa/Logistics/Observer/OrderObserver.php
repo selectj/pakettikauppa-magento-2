@@ -54,7 +54,7 @@ class OrderObserver implements ObserverInterface
                 $method_available = false;
 
                 if ($method == 'pktkppickuppoint') {
-                    $zip = $this->dataHelper->getZip() ?: $order->getShippingAddress()->getPostcode();
+                    $zip = !empty($this->dataHelper->getZip()) ? $this->dataHelper->getZip() : $order->getShippingAddress()->getPostcode();
                     $pickup_methods = $this->apiHelper->getPickuppoints($zip);
                     $pickuppoint_zip = $quote->getData('pickuppoint_zip');
 
