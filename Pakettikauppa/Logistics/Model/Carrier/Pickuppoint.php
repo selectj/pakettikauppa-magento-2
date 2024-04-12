@@ -1,7 +1,9 @@
 <?php
 namespace Pakettikauppa\Logistics\Model\Carrier;
 
+use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Address\RateRequest;
+use Magento\Quote\Model\Quote\Item;
 
 class Pickuppoint extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
     \Magento\Shipping\Model\Carrier\CarrierInterface
@@ -55,7 +57,8 @@ class Pickuppoint extends \Magento\Shipping\Model\Carrier\AbstractCarrier implem
             $data = $this->registry->registry('pktkpicons');
             $this->registry->unregister('pktkpicons');
         }
-        $zip = $this->dataHelper->getZip();
+        $quote = $this->dataHelper->getQuoteSafely($request);
+        $zip = $quote->getShippingAddress()->getPostcode();
         $hasValidPickupPoints = false;
         if ($this->dataHelper->validateZip($zip) && $zip) {
             if (!empty($this->session->getData(static::API_RATE_LIMIT_CACHE_KEY))) {

@@ -2,6 +2,9 @@
 namespace Pakettikauppa\Logistics\Helper;
 
 use Magento\Checkout\Model\Cart;
+use Magento\Quote\Model\Quote;
+use Magento\Quote\Model\Quote\Address\RateRequest;
+use Magento\Quote\Model\Quote\Item;
 
 class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {
@@ -44,6 +47,27 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     public function validateZip($zip): bool
     {
         return is_string($zip) && strlen($zip) >= static::ZIP_MIN_LENGTH;
+    }
+
+    public function getQuoteSafely($request)
+    {
+        $items = $request->getAllItems();
+        if (empty($items)) {
+            return false;
+        }
+
+        /** @var Item $firstItem */
+        $firstItem = reset($items);
+        if (!$firstItem) {
+            return false;
+        }
+
+        $quote = $firstItem->getQuote();
+        if (!($quote instanceof Quote)) {
+            return false;
+        }
+
+        return $quote;
     }
 
     public function getCountry() {

@@ -63,7 +63,8 @@ class Homedelivery extends \Magento\Shipping\Model\Carrier\AbstractCarrier imple
                 }
                 if ($enabled == 1) {
                     // Check if this shipping method supports the country
-                    if (!in_array($this->dataHelper->getCountry(), $hd->supported_countries, true)) {
+                    $quote = $this->dataHelper->getQuoteSafely($request);
+                    if (!in_array($quote->getShippingAddress()->getCountryId(), $hd->supported_countries, true)) {
                         continue;
                     }
                     $method = $this->rateMethodFactory->create();
